@@ -1,0 +1,30 @@
+language: node_js
+node_js:
+ - "14.16"
+
+branches:
+  only:
+  - master
+  - /^deploy-.*$/
+
+addons:
+  chrome: stable
+
+before_script:
+  - yarn global add @angular/cli
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+script:
+  - ng build --prod
+
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  keep-history: true
+  local-dir: ./dist/
+  on:

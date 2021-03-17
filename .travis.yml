@@ -1,12 +1,4 @@
 language: node_js
+
 node_js:
- - "14.16"
-
-branches:
-  only:
-  - master
-  - deploy
-
-script:
-  - npm i
-  - npm run dev
+ - node

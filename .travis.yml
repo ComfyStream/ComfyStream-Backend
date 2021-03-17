@@ -5,5 +5,8 @@ node_js:
 branches:
   only:
   - master
-  - /^deploy-.*$/
+  - deploy
 
+script:
+  - npm i
+  - npm run dev

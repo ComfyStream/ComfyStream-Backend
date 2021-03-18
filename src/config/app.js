@@ -14,7 +14,6 @@ app.use(cors({ origin: '*' }))
 
 //Rutas
 
-
 //Inicio del servidor
 function iniciarServidor() {
     app.listen(app.get('puerto'), () => console.log(`Servidor activo en puerto ${app.get('puerto')}`))

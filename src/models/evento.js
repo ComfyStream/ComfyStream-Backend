@@ -1,7 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-
-const EventoSchema = Schema({
+const eventoSchema = Schema({
 
     imagenes: [{
         type: String
@@ -30,25 +29,18 @@ const EventoSchema = Schema({
         required: true
     },
     fecha: {
-        type: String,
+        type: Date,
         required: true
     },
     enlace: {
         type: String,
         required: true
     },
-    proveedor: {
-        required: true,
+    profesional: {
         type: Schema.Types.ObjectId,
-        ref: 'Proveedor'
+        ref: 'Usuario'
     }
-
 });
 
-EventoSchema.method('toJSON', function() {
-    const { __v, ...object } = this.toObject();
-    return object;
-})
 
-
-module.exports = model('Evento', EventoSchema);
+module.exports = model('Evento', eventoSchema);

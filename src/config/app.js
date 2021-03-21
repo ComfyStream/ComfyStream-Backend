@@ -13,6 +13,7 @@ app.use(express.json())
 app.use(cors({ origin: '*' }))
 
 //Rutas
+app.use('/comfystream/api', require('../routes/usuario.routes'))
 
 //Inicio del servidor
 function iniciarServidor() {

@@ -14,6 +14,7 @@ app.use(cors({ origin: '*' }))
 
 //Rutas
 app.use('/comfystream/api', require('../routes/usuario.routes'))
+app.use('/comfystream/api', require('../routes/evento.routes'))
 
 
 //Inicio del servidor

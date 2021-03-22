@@ -5,19 +5,28 @@ const verificarToken = require('../tools/verificarToken')
 
 const router = Router()
 
-router.get('/evento', async(req, resp) => {
+router.get('/eventos', async(req, resp) => {
     const eventos = await Evento.find()
-    return resp.json({ eventos })
+    return resp.json({
+        msg: '200 OK',
+        eventos
+    })
 })
 router.post('/evento', async(req, res) => {
     const { _id } = req.body
     const evento = await Evento.findById({ _id })
-    res.json(evento)
+    return res.json({
+        msg: '200 OK',
+        evento
+    })
 })
-router.post('/evento/mios', verificarToken, async(req, res) => {
+router.get('/mis-eventos', verificarToken, async(req, res) => {
     const usuario = req.usuario
-    const evento = await Evento.find({ profesional: usuario._id })
-    res.json(evento)
+    const eventos = await Evento.find({ profesional: usuario._id })
+    return res.json({
+        msg: '200 OK',
+        eventos
+    })
 })
 
 module.exports = router

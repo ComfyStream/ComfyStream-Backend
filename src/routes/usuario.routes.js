@@ -16,7 +16,8 @@ router.post('/login', async(req, res) => {
     res.json({
         msg: "Login realizado con exito",
         usuarioId: usuario._id,
-        token: Token.getJwtToken(usuario)
+        token: Token.getJwtToken(usuario),
+        profesional: usuario.profesional
     })
 })
 

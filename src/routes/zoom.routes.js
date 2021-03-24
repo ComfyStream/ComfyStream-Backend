@@ -118,7 +118,6 @@ router.post('/zoom/room', async (req, res, next) => {
 
         const { email } = req.body
 
-        console.log('https://api.zoom.us/v2/users/' + req.body.email + '/meetings')
         const usuario = await Usuario.findOne({ email })
 
         const zoomDatosUsuarios = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });

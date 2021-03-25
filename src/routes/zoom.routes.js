@@ -49,6 +49,11 @@ router.post('/zoom/token', async (req, res, next) => {
         const { email } = req.body
         const usuario = await Usuario.findOne({ email })
 
+        const preDatosZoom = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
+
+        // Si existen datos previos lanzamos un error
+        if(preDatosZoom) return next(new Error("El usuario ya cuenta con datos de acceso a Zoom"))
+
         const zoomDatosUsuarios = new ZoomDatosUsuarios({
             userId: usuario._id,
             access_token: datosParseados.access_token,
@@ -56,12 +61,52 @@ router.post('/zoom/token', async (req, res, next) => {
             expires_in: datosParseados.expires_in
         })
 
-        await zoomDatosUsuarios.save()       
+        await zoomDatosUsuarios.save()   
+        
+        //Si existen datos previos se actualizan con los nuevos, si no se crean nuevos y se guardan
+        /*
+        if(preDatosZoom) {
+            preDatosZoom.userId = usuario._id;
+            preDatosZoom.access_token = datosParseados.access_token;
+            preDatosZoom.refresh_token = datosParseados.refresh_token;
+            preDatosZoom.expires_in = datosParseados.expires_in;
+
+            await preDatosZoom.save()      
+        } else {
+            const zoomDatosUsuarios = new ZoomDatosUsuarios({
+                userId: usuario._id,
+                access_token: datosParseados.access_token,
+                refresh_token: datosParseados.refresh_token,
+                expires_in: datosParseados.expires_in
+            })
+
+            await zoomDatosUsuarios.save()      
+        }
+        */
 
         return res.json({
             msg: "200 Ok",
-            data: JSON.parse(respuesta.body),
-            datos: zoomDatosUsuarios
+            data: JSON.parse(respuesta.body)
+        });
+    } catch(e) {
+        return next(e);
+    }
+});
+
+// Elimina los datos de Zoom (access_token, refresh_token, etc...) de un usuario por su email
+router.delete('/zoom/token', async (req, res, next) => {
+    try {
+        const { email } = req.body
+        const usuario = await Usuario.findOne({ email })
+        
+        if(!usuario) return next(new Error("No existen datos del usuario"))
+
+        const datosZoomUsuario = await ZoomDatosUsuarios.deleteOne({ userId: mongoose.Types.ObjectId(usuario._id) });
+        if(datosZoomUsuario.deletedCount == 0) return next(new Error("No existen datos de Zoom del usuario"))
+
+        return res.json({
+            msg: "200 Ok",
+            data: "Datos de Zoom del usuario eliminados correctamente"
         });
     } catch(e) {
         return next(e);
@@ -123,10 +168,11 @@ router.post('/zoom/room', async (req, res, next) => {
         const zoomDatosUsuarios = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
 
         const body = {
-            "topic": req.body.topic,
-            "type": req.body.type,
-            "start_time": req.body.start_time,
-            "duration": req.body.duration
+            "topic": req.body.titulo,
+            "type": 2,
+            "start_time": req.body.fecha,
+            "duration": req.body.duracion,
+            "waiting_room": true
         }
 
         const respuesta = await got.post('https://api.zoom.us/v2/users/' + req.body.zoom_email + '/meetings', {

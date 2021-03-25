@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 
 const { puerto } = require('./env')
+const refrescoTokenZoom = require('../tools/refrescoTokenZoom')
 
 const app = express()
 
@@ -14,8 +15,11 @@ app.use(cors({ origin: '*' }))
 
 //Rutas
 app.use('/comfystream/api', require('../routes/usuario.routes'))
+app.use('/comfystream/api', require('../routes/zoom.routes'))
 app.use('/comfystream/api', require('../routes/evento.routes'))
 
+// Refrescamos los tokens de Zoom cada 30 minutos
+setInterval(refrescoTokenZoom, 1000*60*30)
 
 //Inicio del servidor
 function iniciarServidor() {

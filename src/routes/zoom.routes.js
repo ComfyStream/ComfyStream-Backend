@@ -151,12 +151,13 @@ router.post('/zoom/token/refresh', async (req, res, next) => {
 // para el correo de su cuenta de Zoom con el resto de parámetros. 
 // NOTA: Se pueden añadir más parámetros: https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingcreate
 /* Parámetros actuales:
+    "eventoId":"605396f8a3edff5f615522e1",
     "email": "jescoevas@hotmail.com",
     "zoom_email": "comfystreamcontact@gmail.com",
-    "topic": "Test",
+    "titulo": "Test con eventoId",
     "type": 2,
-    "start_time": "2021-03-24T16:54:14Z",
-    "duration": 60
+    "fecha": "2021-03-24T16:54:14Z",
+    "duracion": 60
 */
 router.post('/zoom/room', async (req, res, next) => {
     try {
@@ -187,6 +188,7 @@ router.post('/zoom/room', async (req, res, next) => {
 
         const zoomDatosReunion = new ZoomDatosReunion({
             userId: usuario._id,
+            eventoId: req.body.eventoId,
             uuid: respuestaParseada.uuid,
             id: respuestaParseada.id,
             host_id: respuestaParseada.host_id,

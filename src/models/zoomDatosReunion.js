@@ -3,7 +3,13 @@ const { Schema, model } = require('mongoose');
 const zoomDatosReunionSchema = Schema({
     userId: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: 'Usuario',
+        required: true
+    },
+    eventoId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Evento',
+        required: true
     },
     uuid: {
         type: String,

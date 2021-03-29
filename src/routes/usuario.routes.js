@@ -5,6 +5,7 @@ const ZoomDatosUsuarios = require('../models/zoomDatosUsuarios');
 const Token = require('../tools/token');
 const zoomDatosUsuarios = require('../models/zoomDatosUsuarios');
 
+
 const router = Router()
 
 router.post('/login', async(req, res) => {
@@ -22,6 +23,13 @@ router.post('/login', async(req, res) => {
         token: Token.getJwtToken(usuario),
         profesional: usuario.profesional
     })
+})
+
+router.get('/usuario',verificarToken, async(req, res) => {
+    const usuario = req.usuario
+    res.json({
+        msg: "200 ok",
+        usuario})
 })
 
 

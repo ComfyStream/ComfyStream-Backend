@@ -1,6 +1,9 @@
-const { Router } = require('express')
-const Usuario = require('../models/usuario')
-const Token = require('../tools/token')
+const { Router } = require('express');
+const Usuario = require('../models/usuario');
+const verificarToken = require('../tools/verificarToken');
+const ZoomDatosUsuarios = require('../models/zoomDatosUsuarios');
+const Token = require('../tools/token');
+const zoomDatosUsuarios = require('../models/zoomDatosUsuarios');
 
 const router = Router()
 
@@ -22,5 +25,14 @@ router.post('/login', async(req, res) => {
 })
 
 
+router.get('/usuarioZoom', verificarToken, async(req, res) => {
+    const usuario = req.usuario
 
+    const usuarioZoom = await ZoomDatosUsuarios.findOne({ userId: usuario })
+    console.log(usuarioZoom);
+    res.json({
+        msg: "200 ok",
+        usuarioZoom
+    })
+})
 module.exports = router

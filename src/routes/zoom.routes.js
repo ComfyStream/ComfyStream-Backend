@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const got = require('got')
 const mongoose = require('mongoose');
+const verificarToken = require('../tools/verificarToken')
 
 const Usuario = require('../models/usuario')
 const ZoomDatosUsuarios = require('../models/zoomDatosUsuarios')
@@ -8,51 +9,51 @@ const ZoomDatosReunion = require('../models/ZoomDatosReunion')
 
 const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
 const ZOOM_CLIENT_SECRET = "jvchOnsZAjVtHRAaYP7xEj95XaiwX6el";
-const ZOOM_REDIRECT_URI = "http://localhost/landing"
+const ZOOM_REDIRECT_URI = "https://fac1d7f10c4f.ngrok.io/landing"
 
 const router = Router()
 
 // Devuelve la URL en la que se solicita los datos de login de Zoom al usuario.
 // Tras finalizar correctamente, devuelve un código en la url del landing page.
-router.get('/zoom/token', async (req, res, next) => {
+router.get('/zoom/token', verificarToken, async(req, res, next) => {
     try {
-        const uri = 'https://zoom.us/oauth/authorize'
-        + '?response_type=code'
-        + '&client_id=' + ZOOM_CLIENT_ID
-        + '&redirect_uri=' + ZOOM_REDIRECT_URI;
+        const uri = 'https://zoom.us/oauth/authorize' +
+            '?response_type=code' +
+            '&client_id=' + ZOOM_CLIENT_ID +
+            '&redirect_uri=' + ZOOM_REDIRECT_URI;
 
         return res.json({
             msg: "200 Ok",
             data: uri
         })
-    } catch(e) {
+    } catch (e) {
         return next(e);
     }
 });
 
 // Procesado del código de zoom devuelto al landing page.
 // Devuelve un token de acceso y uno de refresco, almacenados en la BD referidos al usuario.
-router.post('/zoom/token', async (req, res, next) => {
+router.post('/zoom/token', verificarToken, async(req, res, next) => {
     try {
 
-        const respuesta = await got.post('https://zoom.us/oauth/token'
-        + '?code=' + req.body.code
-        + '&redirect_uri=' + ZOOM_REDIRECT_URI
-        + '&grant_type=authorization_code', {
-            headers: {
-                "Authorization": "Basic " + Buffer.from(ZOOM_CLIENT_ID + ':' + ZOOM_CLIENT_SECRET).toString('base64')
-            }
-        });
+        const respuesta = await got.post('https://zoom.us/oauth/token' +
+            '?code=' + req.body.code +
+            '&redirect_uri=' + ZOOM_REDIRECT_URI +
+            '&grant_type=authorization_code', {
+                headers: {
+                    "Authorization": "Basic " + Buffer.from(ZOOM_CLIENT_ID + ':' + ZOOM_CLIENT_SECRET).toString('base64')
+                }
+            });
 
         const datosParseados = JSON.parse(respuesta.body)
 
-        const { email } = req.body
-        const usuario = await Usuario.findOne({ email })
-
+        // const { email } = req.body
+        // const usuario = await Usuario.findOne({ email })
+        const usuario = req.usuario;
         const preDatosZoom = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
 
         // Si existen datos previos lanzamos un error
-        if(preDatosZoom) return next(new Error("El usuario ya cuenta con datos de acceso a Zoom"))
+        if (preDatosZoom) return next(new Error("El usuario ya cuenta con datos de acceso a Zoom"))
 
         const zoomDatosUsuarios = new ZoomDatosUsuarios({
             userId: usuario._id,
@@ -61,8 +62,8 @@ router.post('/zoom/token', async (req, res, next) => {
             expires_in: datosParseados.expires_in
         })
 
-        await zoomDatosUsuarios.save()   
-        
+        await zoomDatosUsuarios.save()
+
         //Si existen datos previos se actualizan con los nuevos, si no se crean nuevos y se guardan
         /*
         if(preDatosZoom) {
@@ -88,42 +89,41 @@ router.post('/zoom/token', async (req, res, next) => {
             msg: "200 Ok",
             data: JSON.parse(respuesta.body)
         });
-    } catch(e) {
+    } catch (e) {
         return next(e);
     }
 });
 
 // Elimina los datos de Zoom (access_token, refresh_token, etc...) de un usuario por su email
-router.delete('/zoom/token', async (req, res, next) => {
+router.delete('/zoom/token', verificarToken, async(req, res, next) => {
     try {
-        const { email } = req.body
-        const usuario = await Usuario.findOne({ email })
-        
-        if(!usuario) return next(new Error("No existen datos del usuario"))
+        const usuario = req.usuario;
+
+        if (!usuario) return next(new Error("No existen datos del usuario"))
 
         const datosZoomUsuario = await ZoomDatosUsuarios.deleteOne({ userId: mongoose.Types.ObjectId(usuario._id) });
-        if(datosZoomUsuario.deletedCount == 0) return next(new Error("No existen datos de Zoom del usuario"))
+        if (datosZoomUsuario.deletedCount == 0) return next(new Error("No existen datos de Zoom del usuario"))
 
         return res.json({
             msg: "200 Ok",
             data: "Datos de Zoom del usuario eliminados correctamente"
         });
-    } catch(e) {
+    } catch (e) {
         return next(e);
     }
 });
 
 // Refresca un token de Zoom a partir del correo del usuario
-router.post('/zoom/token/refresh', async (req, res, next) => {
+router.post('/zoom/token/refresh', async(req, res, next) => {
     try {
         const { email } = req.body
         const usuario = await Usuario.findOne({ email })
-        
+
         const zoomDatosUsuarios = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
-        
-        const respuesta = await got.post('https://zoom.us/oauth/token'
-            + '?grant_type=refresh_token'
-            + '&refresh_token=' + zoomDatosUsuarios.refresh_token, {
+
+        const respuesta = await got.post('https://zoom.us/oauth/token' +
+            '?grant_type=refresh_token' +
+            '&refresh_token=' + zoomDatosUsuarios.refresh_token, {
                 headers: {
                     "Authorization": "Basic " + Buffer.from(ZOOM_CLIENT_ID + ':' + ZOOM_CLIENT_SECRET).toString('base64')
                 }
@@ -142,7 +142,7 @@ router.post('/zoom/token/refresh', async (req, res, next) => {
             msg: "200 Ok",
             datos: zoomDatosUsuarios
         });
-    } catch(e) {
+    } catch (e) {
         return next(e)
     }
 });
@@ -159,7 +159,7 @@ router.post('/zoom/token/refresh', async (req, res, next) => {
     "fecha": "2021-03-24T16:54:14Z",
     "duracion": 60
 */
-router.post('/zoom/room', async (req, res, next) => {
+router.post('/zoom/room', async(req, res, next) => {
     try {
 
         const { email } = req.body
@@ -211,7 +211,7 @@ router.post('/zoom/room', async (req, res, next) => {
             datos: JSON.parse(respuesta.body)
         });
 
-    } catch(e) {
+    } catch (e) {
         return next(e);
     }
 });

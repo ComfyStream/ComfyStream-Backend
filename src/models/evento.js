@@ -2,9 +2,9 @@ const { Schema, model } = require('mongoose');
 
 const eventoSchema = Schema({
 
-    imagenes: [{
+    img: {
         type: String
-    }],
+    },
     titulo: {
         type: String,
         required: true
@@ -32,8 +32,8 @@ const eventoSchema = Schema({
         type: Date,
         required: true
     },
-    enlace: {
-        type: String,
+    duracion: {
+        type: Number,
         required: true
     },
     profesional: {

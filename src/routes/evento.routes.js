@@ -1,9 +1,12 @@
 const { Router } = require('express')
 const Evento = require('../models/evento')
+const Usuario = require('../models/usuario')
 const verificarToken = require('../tools/verificarToken')
+const EventoFotos = require('../tools/evento-fotos')
 
 
 const router = Router()
+const eventoFotos = new EventoFotos()
 
 router.get('/eventos', async(req, resp) => {
     const eventos = await Evento.find()
@@ -27,6 +30,36 @@ router.get('/mis-eventos', verificarToken, async(req, res) => {
         msg: '200 OK',
         eventos
     })
+})
+
+router.post('/evento/nuevo', verificarToken, async(req, resp) => {
+    if (!req.files)
+        return resp.json({ msg: "No se han enviado archivos" })
+    const { img } = req.files
+    if (!img.mimetype.includes('image'))
+        return resp.json({ msg: "No se ha subido ninguna imagen" })
+    let datos = req.body
+    const idProfesional = req.usuario._id
+    const profesional = await Usuario.findById(idProfesional)
+    datos.profesional = profesional
+    let evento = await Evento.create(datos)
+    await eventoFotos.asignarFoto(img, String(profesional._id), String(evento._id))
+    const fotoEvento = eventoFotos.getFoto(String(profesional._id), String(evento._id))
+    evento = await Evento.findById(String(evento._id))
+    evento.img = fotoEvento
+    await Evento.findByIdAndUpdate(String(evento._id), evento, { new: true })
+    resp.json({
+        msg: 'Exito',
+        evento
+    })
+})
+
+router.get('/:usuarioId/:eventoId/img', (req, res) => {
+    const { usuarioId, eventoId } = req.params
+    const path = eventoFotos.getCarpetaEventos(usuarioId)
+    const foto = eventoFotos.getFoto(usuarioId, eventoId)
+    const pathCompleto = `${path}/${foto}`
+    res.sendFile(pathCompleto)
 })
 
 module.exports = router

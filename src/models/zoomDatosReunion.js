@@ -1,14 +1,14 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const zoomDatosReunionSchema = Schema({
     userId: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario',
+        ref: "Usuario",
         required: true
     },
     eventoId: {
         type: Schema.Types.ObjectId,
-        ref: 'Evento',
+        ref: "Evento",
         required: true
     },
     uuid: {
@@ -62,4 +62,4 @@ const zoomDatosReunionSchema = Schema({
 });
 
 
-module.exports = model('zoomDatosReunion', zoomDatosReunionSchema);
+module.exports = model("zoomDatosReunion", zoomDatosReunionSchema);

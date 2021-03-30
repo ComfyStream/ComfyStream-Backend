@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { baseDeDatos } = require('./env')
+const mongoose = require("mongoose");
+const { baseDeDatos } = require("./env");
 
 async function iniciarBaseDeDatos() {
     await mongoose.connect(baseDeDatos, {
@@ -8,9 +8,9 @@ async function iniciarBaseDeDatos() {
         useFindAndModify: false,
         useCreateIndex: true
     })
-    console.log('Conectado a MongoDB');
-}
+    console.log("Conectado a MongoDB");
+};
 
 module.exports = {
     iniciarBaseDeDatos
-}
+};

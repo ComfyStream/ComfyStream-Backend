@@ -1,9 +1,9 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const zoomDatosUsuariosSchema = Schema({
     userId: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: "Usuario"
     },
     access_token: {
         type: String,
@@ -15,8 +15,8 @@ const zoomDatosUsuariosSchema = Schema({
     expires_in: {
         type: String,
         required: true
-    }    
+    }
 });
 
 
-module.exports = model('ZoomDatosUsuarios', zoomDatosUsuariosSchema);
+module.exports = model("ZoomDatosUsuarios", zoomDatosUsuariosSchema);

@@ -9,7 +9,7 @@ const ZoomDatosReunion = require('../models/ZoomDatosReunion')
 
 const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
 const ZOOM_CLIENT_SECRET = "jvchOnsZAjVtHRAaYP7xEj95XaiwX6el";
-const ZOOM_REDIRECT_URI = "https://fac1d7f10c4f.ngrok.io/landing"
+const ZOOM_REDIRECT_URI = "https://2efd0e4d15bd.ngrok.io/landing"
 
 const router = Router()
 
@@ -159,14 +159,24 @@ router.post('/zoom/token/refresh', async(req, res, next) => {
     "fecha": "2021-03-24T16:54:14Z",
     "duracion": 60
 */
-router.post('/zoom/room', async(req, res, next) => {
+router.post('/zoom/room', verificarToken, async(req, res, next) => {
     try {
 
-        const { email } = req.body
+        const usuario = req.usuario;
 
-        const usuario = await Usuario.findOne({ email })
+        const zoomDatosUsuarios = await ZoomDatosUsuarios.findOne({ userId: usuario._id });
 
-        const zoomDatosUsuarios = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
+        const usuarioDetalles = await got.get('https://api.zoom.us/v2/users/me', {
+            headers: {
+                'Authorization': 'Bearer ' + zoomDatosUsuarios.access_token
+            }
+        });
+
+        const email = JSON.parse(usuarioDetalles.body)["email"]
+
+
+
+        console.log(req.body);
 
         const body = {
             "topic": req.body.titulo,
@@ -176,7 +186,7 @@ router.post('/zoom/room', async(req, res, next) => {
             "waiting_room": true
         }
 
-        const respuesta = await got.post('https://api.zoom.us/v2/users/' + req.body.zoom_email + '/meetings', {
+        const respuesta = await got.post('https://api.zoom.us/v2/users/' + email + '/meetings', {
             headers: {
                 'Authorization': 'Bearer ' + zoomDatosUsuarios.access_token,
                 'Content-Type': 'application/json'
@@ -188,7 +198,7 @@ router.post('/zoom/room', async(req, res, next) => {
 
         const zoomDatosReunion = new ZoomDatosReunion({
             userId: usuario._id,
-            eventoId: req.body.eventoId,
+            eventoId: req.body._id,
             uuid: respuestaParseada.uuid,
             id: respuestaParseada.id,
             host_id: respuestaParseada.host_id,

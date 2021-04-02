@@ -5,7 +5,7 @@
     "main": "index.js",
     "engines": {
         "node": "14.x"
-    }
+    },
     "scripts": {
         "dev": "nodemon index.js",
         "test": "echo \"No hay tests\" && exit 0",

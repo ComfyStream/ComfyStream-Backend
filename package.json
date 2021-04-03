@@ -17,6 +17,7 @@
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "express-fileupload": "^1.2.1",
+        "fill-range": "^7.0.1",
         "got": "^11.8.2",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.12.0"

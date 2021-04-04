@@ -5,7 +5,7 @@ const verificarToken = require('../tools/verificarToken')
 
 const Usuario = require('../models/usuario')
 const ZoomDatosUsuarios = require('../models/zoomDatosUsuarios')
-const ZoomDatosReunion = require('../models/ZoomDatosReunion')
+const ZoomDatosReunion = require('../models/zoomDatosReunion')
 
 const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
 const ZOOM_CLIENT_SECRET = "jvchOnsZAjVtHRAaYP7xEj95XaiwX6el";

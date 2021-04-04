@@ -1,17 +1,17 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const asistenciaSchema = Schema({
 
     usuario: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: "Usuario"
     },
     evento: {
         type: Schema.Types.ObjectId,
-        ref: 'Evento'
+        ref: "Evento"
     }
 
 });
 
 
-module.exports = model('Asistencia', asistenciaSchema);
+module.exports = model("Asistencia", asistenciaSchema);

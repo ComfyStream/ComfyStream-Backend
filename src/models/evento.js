@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const eventoSchema = Schema({
 
@@ -38,9 +38,9 @@ const eventoSchema = Schema({
     },
     profesional: {
         type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+        ref: "Usuario"
     }
 });
 
 
-module.exports = model('Evento', eventoSchema);
+module.exports = model("Evento", eventoSchema);

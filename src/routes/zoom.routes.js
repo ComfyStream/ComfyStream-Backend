@@ -9,7 +9,7 @@ const ZoomDatosReunion = require('../models/ZoomDatosReunion')
 
 const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
 const ZOOM_CLIENT_SECRET = "jvchOnsZAjVtHRAaYP7xEj95XaiwX6el";
-const ZOOM_REDIRECT_URI = "https://af84b1632644.ngrok.io/landing"
+const ZOOM_REDIRECT_URI = "https://comfystream-frontend-s1.web.app/landing"
 
 const router = Router()
 

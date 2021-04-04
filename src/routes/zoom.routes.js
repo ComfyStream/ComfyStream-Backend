@@ -5,11 +5,11 @@ const verificarToken = require("../tools/verificarToken");
 
 const Usuario = require("../models/usuario");
 const ZoomDatosUsuarios = require("../models/zoomDatosUsuarios");
-const ZoomDatosReunion = require("../models/ZoomDatosReunion");
+const ZoomDatosReunion = require("../models/zoomDatosReunion");
 
 const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
-const ZOOM_CLIENT_SECRET = "jvchOnsZAjVtHRAaYP7xEj95XaiwX6el";
-const ZOOM_REDIRECT_URI = "https://fac1d7f10c4f.ngrok.io/landing";
+const ZOOM_CLIENT_SECRET = "5j4pldvoGkaK1VWW3fn9oojvC7hzq9Op";
+const ZOOM_REDIRECT_URI = "https://comfystream-frontend-s1.web.app/landing";
 
 const router = Router()
 
@@ -114,10 +114,10 @@ router.delete("/zoom/token", verificarToken, async(req, res, next) => {
 });
 
 // Refresca un token de Zoom a partir del correo del usuario
-router.post("/zoom/token/refresh", async(req, res, next) => {
-    try {
-        const usuario = await Usuario.findOne({ email: req.body.email });
 
+router.post("/zoom/token/refresh", verificarToken, async(req, res, next) => {
+    try {
+        const usuario = req.usuario;
         const zoomDatosUsuarios = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
 
         const respuesta = await got.post("https://zoom.us/oauth/token" +
@@ -158,13 +158,11 @@ router.post("/zoom/token/refresh", async(req, res, next) => {
     "fecha": "2021-03-24T16:54:14Z",
     "duracion": 60
 */
-router.post("/zoom/room", async(req, res, next) => {
+
+router.post("/zoom/room", verificarToken, async(req, res, next) => {
     try {
-
-        const usuario = await Usuario.findOne({ email: req.body.email });
-
+        const usuario = req.usuario;
         const zoomDatosUsuarios = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
-
         const body = {
             "topic": req.body.titulo,
             "type": 2,
@@ -172,8 +170,15 @@ router.post("/zoom/room", async(req, res, next) => {
             "duration": req.body.duracion,
             "waiting_room": true
         };
+        const datosUsuario = await got.get("https://api.zoom.us/v2/users/me", {
+            headers: {
+                "Authorization": "Bearer " + zoomDatosUsuarios.access_token
+            }
 
-        const respuesta = await got.post("https://api.zoom.us/v2/users/" + req.body.zoom_email + "/meetings", {
+        });
+
+        const respuesta = await got.post("https://api.zoom.us/v2/users/" + JSON.parse(datosUsuario.body)["email"] + "/meetings", {
+
             headers: {
                 "Authorization": "Bearer " + zoomDatosUsuarios.access_token,
                 "Content-Type": "application/json"
@@ -183,9 +188,10 @@ router.post("/zoom/room", async(req, res, next) => {
 
         const respuestaParseada = JSON.parse(respuesta.body);
 
+        console.log(req);
         const zoomDatosReunion = new ZoomDatosReunion({
             userId: usuario._id,
-            eventoId: req.body.eventoId,
+            eventoId: req.body._id,
             uuid: respuestaParseada.uuid,
             id: respuestaParseada.id,
             host_id: respuestaParseada.host_id,
@@ -213,4 +219,20 @@ router.post("/zoom/room", async(req, res, next) => {
     }
 });
 
-module.exports = router;
+
+
+router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {
+    try {
+
+        const zoomDatosUsuarios = await ZoomDatosReunion.findOne({ eventoId: mongoose.Types.ObjectId(req.body.eventoId) });
+
+        return res.json({
+            msg: "200 Ok",
+            zoomDatosUsuarios: zoomDatosUsuarios
+        });
+    } catch (e) {
+        return next(e);
+    };
+});
+
+module.exports = router

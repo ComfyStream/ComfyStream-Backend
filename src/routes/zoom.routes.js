@@ -8,7 +8,7 @@ const ZoomDatosUsuarios = require('../models/zoomDatosUsuarios')
 const ZoomDatosReunion = require('../models/zoomDatosReunion')
 
 const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
-const ZOOM_CLIENT_SECRET = "jvchOnsZAjVtHRAaYP7xEj95XaiwX6el";
+const ZOOM_CLIENT_SECRET = "5j4pldvoGkaK1VWW3fn9oojvC7hzq9Op";
 const ZOOM_REDIRECT_URI = "https://comfystream-frontend-s1.web.app/landing"
 
 const router = Router()

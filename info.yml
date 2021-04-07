@@ -1,0 +1,54 @@
+project:
+  name: 'comfystream'
+  owner: 'morning'
+  teamId: '02-ISPP2021-MAÑANA'
+  identities:
+    github:
+      url: 'https://github.com/ComfyStream/ComfyStream-Backend'
+    heroku:
+      url: 'https://comfystream-backend-s2.herokuapp.com/'
+    travis:
+      url: 'https://www.travis-ci.com/github/ComfyStream/ComfyStream-Backend'
+  members:
+    member:
+      name: 'Sergio'
+      surname: 'Perea Ruiz' 
+      githubUsername: 'serperrui1'
+    member:
+      name: 'Jesús'
+      surname: 'Coello Vasconi' 
+      githubUsername: 'jescoevas'
+    member:
+      name: 'Pedro Manuel'
+      surname: 'Cobos Ramos' 
+      githubUsername: 'pedcobram'
+    member:
+      name: 'Francisco José'
+      surname: 'Rodríguez Gómez' 
+      githubUsername: 'frankrogo'
+    member:
+      name: 'Alejandro'
+      surname: 'González Díaz' 
+      githubUsername: 'alegondia1'
+    member:
+      name: 'Álvaro'
+      surname: 'Alcón Granado' 
+      githubUsername: 'AlvaroAg1995'
+    member:
+      name: 'Pablo'
+      surname: 'Leal Díaz' 
+      githubUsername: 'pableadia1'
+    member:
+      name: 'Moisés'
+      surname: 'Martín Ramírez' 
+      githubUsername: 'moi97'
+    member:
+      name: 'Julio'
+      surname: 'Martínez Rossell' 
+      githubUsername: 'jumaro3112'
+    member:
+      name: 'Antonio'
+      surname: 'Rosado Barrera' 
+      githubUsername: 'antrosbarDP'
+    
+      

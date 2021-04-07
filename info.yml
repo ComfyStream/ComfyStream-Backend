@@ -1,0 +1,20 @@
+project:
+  name: 'comfystream'
+  owner: 'morning'
+  teamId: '02-ISPP2021-MAÑANA'
+  identities:
+    github:
+      url: 'https://github.com/ComfyStream/ComfyStream-Backend'
+    pivotal:
+      url: 'url'
+    heroku:
+      url: 'url'
+    travis:
+      url: 'https://www.travis-ci.com/github/ComfyStream/ComfyStream-Backend'
+    codeclimate:
+      url: 'url'
+  members:
+    member:
+      name: 'string'
+      surname: 'string' 
+      githubUsername: 'string'

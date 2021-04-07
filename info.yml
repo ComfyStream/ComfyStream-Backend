@@ -10,43 +10,43 @@ project:
     travis:
       url: 'https://www.travis-ci.com/github/ComfyStream/ComfyStream-Backend'
   members:
-    member:
+    member1:
       name: 'Sergio'
       surname: 'Perea Ruiz' 
       githubUsername: 'serperrui1'
-    member:
+    member2:
       name: 'Jesús'
       surname: 'Coello Vasconi' 
       githubUsername: 'jescoevas'
-    member:
+    member3:
       name: 'Pedro Manuel'
       surname: 'Cobos Ramos' 
       githubUsername: 'pedcobram'
-    member:
+    member4:
       name: 'Francisco José'
       surname: 'Rodríguez Gómez' 
       githubUsername: 'frankrogo'
-    member:
+    member5:
       name: 'Alejandro'
       surname: 'González Díaz' 
       githubUsername: 'alegondia1'
-    member:
+    member6:
       name: 'Álvaro'
       surname: 'Alcón Granado' 
       githubUsername: 'AlvaroAg1995'
-    member:
+    member7:
       name: 'Pablo'
       surname: 'Leal Díaz' 
       githubUsername: 'pableadia1'
-    member:
+    member8:
       name: 'Moisés'
       surname: 'Martín Ramírez' 
       githubUsername: 'moi97'
-    member:
+    member9:
       name: 'Julio'
       surname: 'Martínez Rossell' 
       githubUsername: 'jumaro3112'
-    member:
+    member10:
       name: 'Antonio'
       surname: 'Rosado Barrera' 
       githubUsername: 'antrosbarDP'

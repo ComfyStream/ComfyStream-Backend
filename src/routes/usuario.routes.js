@@ -51,4 +51,33 @@ router.get("/usuarioZoom", verificarToken, async(req, res) => {
     });
 })
 
+router.post("/registro", async(req,resp) =>{
+
+    const {email, cuentaBancariaIBAN} = req.body
+    const emailEncontrado = await Usuario.find({email})
+    const bancoEncontrado = await Usuario.find({cuentaBancariaIBAN})
+
+    if(emailEncontrado.length > 0 && bancoEncontrado.length > 0){
+        return resp.json({
+            msg: "El email y la cuenta bancaria ya están en uso"
+        })
+    }else if(emailEncontrado.length > 0){
+        return resp.json({
+            msg: "El email ya está en uso"
+        })
+    }else if(bancoEncontrado.length > 0){
+        return resp.json({
+            msg: "Esta cuenta bancaria ya está en uso"
+        })
+    }else{
+        const usuario = await Usuario.create(req.body)
+        return resp.json({
+            msg: "Registro realizado con éxito",
+            usuario,
+            token: Token.getJwtToken(usuario)
+        })
+    }
+})
+
+
 module.exports = router;

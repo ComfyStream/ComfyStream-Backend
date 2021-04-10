@@ -3,8 +3,9 @@ const Usuario = require("../models/usuario");
 const verificarToken = require("../tools/verificarToken");
 const ZoomDatosUsuarios = require("../models/zoomDatosUsuarios");
 const Token = require("../tools/token");
-const zoomDatosUsuarios = require("../models/zoomDatosUsuarios");
+const UsuarioFotos = require('../tools/usuario-fotos')
 
+const usuarioFotos = new UsuarioFotos()
 
 const router = Router();
 
@@ -12,8 +13,7 @@ router.post("/login", async(req, res) => {
     const usuario = await Usuario.findOne({ email: req.body.email });
     if (!usuario)
         return res.json({ msg: "No se ha encontrado el usuario" });
-    //const coincide = await usuario.compararPassword(password)
-    const coincide = req.body.password == usuario.password;
+    const coincide = await usuario.compararPassword(req.body.password)
     if (!coincide)
         return res.json({ msg: "Password incorrecta" });
     res.json({
@@ -51,26 +51,36 @@ router.get("/usuarioZoom", verificarToken, async(req, res) => {
     });
 })
 
-router.post("/registro", async(req,resp) =>{
+router.post("/registro", async(req, resp) => {
 
-    const {email, cuentaBancariaIBAN} = req.body
-    const emailEncontrado = await Usuario.find({email})
-    const bancoEncontrado = await Usuario.find({cuentaBancariaIBAN})
+    if (!req.files)
+        return res.json({ msg: "No se han enviado archivos" })
+    const { img } = req.files
+    if (!img.mimetype.includes('image'))
+        return res.json({ msg: "No se ha subido ninguna imagen" })
 
-    if(emailEncontrado.length > 0 && bancoEncontrado.length > 0){
+    const { email, cuentaBancariaIBAN } = req.body
+    const emailEncontrado = await Usuario.find({ email })
+    const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN })
+
+    if (emailEncontrado.length > 0 && bancoEncontrado.length > 0) {
         return resp.json({
             msg: "El email y la cuenta bancaria ya están en uso"
         })
-    }else if(emailEncontrado.length > 0){
+    } else if (emailEncontrado.length > 0) {
         return resp.json({
             msg: "El email ya está en uso"
         })
-    }else if(bancoEncontrado.length > 0){
+    } else if (bancoEncontrado.length > 0) {
         return resp.json({
             msg: "Esta cuenta bancaria ya está en uso"
         })
-    }else{
+    } else {
         const usuario = await Usuario.create(req.body)
+        await usuarioFotos.asignarFoto(img, String(usuario._id))
+        const fotoUsuario = usuarioFotos.getFoto(String(usuario._id))
+        usuario.img = fotoUsuario
+        await Usuario.findByIdAndUpdate(String(usuario._id), usuario, { new: true })
         return resp.json({
             msg: "Registro realizado con éxito",
             usuario,

@@ -1,9 +1,9 @@
-const { iniciarBaseDeDatos } = require('./src/config/database')
-const { iniciarServidor } = require('./src/config/app')
+const { iniciarBaseDeDatos } = require("./src/config/database");
+const { iniciarServidor } = require("./src/config/app");
 
 function main() {
-    iniciarBaseDeDatos()
-    iniciarServidor()
+    iniciarBaseDeDatos();
+    iniciarServidor();
 }
 
-main()
+main();

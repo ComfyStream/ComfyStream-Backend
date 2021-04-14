@@ -1,5 +1,5 @@
-const { Schema, model } = require('mongoose');
-const bcryptjs = require('bcryptjs')
+const { Schema, model } = require("mongoose");
+const bcryptjs = require("bcryptjs");
 
 const usuarioSchema = Schema({
 
@@ -45,14 +45,13 @@ const usuarioSchema = Schema({
     }
 });
 
-usuarioSchema.pre('save', function(next) {
+usuarioSchema.pre("save", function(next) {
     this.password = bcryptjs.hashSync(this.password, 10)
     next()
-})
+});
 
-usuarioSchema.method('compararPassword', async function(password) {
-    console.log(typeof(password), typeof(this.password))
+usuarioSchema.method("compararPassword", async function(password) {
     return await bcryptjs.compareSync(password, this.password)
-})
+});
 
-module.exports = model('Usuario', usuarioSchema);
+module.exports = model("Usuario", usuarioSchema);

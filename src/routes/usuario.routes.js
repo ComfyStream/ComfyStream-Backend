@@ -63,15 +63,11 @@ router.post("/registro", async(req, resp) => {
     const emailEncontrado = await Usuario.find({ email })
     const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN })
 
-    if (emailEncontrado.length > 0 && bancoEncontrado.length > 0) {
-        return resp.json({
-            msg: "El email y la cuenta bancaria ya están en uso"
-        })
-    } else if (emailEncontrado.length > 0) {
+    if (emailEncontrado.length > 0) {
         return resp.json({
             msg: "El email ya está en uso"
         })
-    } else if (bancoEncontrado.length > 0) {
+    } else if (cuentaBancariaIBAN && bancoEncontrado.length > 0) {
         return resp.json({
             msg: "Esta cuenta bancaria ya está en uso"
         })

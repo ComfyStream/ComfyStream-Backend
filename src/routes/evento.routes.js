@@ -32,6 +32,25 @@ router.get("/mis-eventos", verificarToken, async(req, res) => {
     });
 })
 
+// Obtiene los usuarios que asisten al evento pasado como parámetro
+router.post("/evento/asistentes", verificarToken, async(req, res) => {
+
+    const eventoId = req.body.eventoId;
+    var asistentes = []
+
+    const idAsistentes = await Asistencia.find({ evento: mongoose.Types.ObjectId(eventoId) });
+
+    for (const asistente of idAsistentes) {
+        const user = await Usuario.findById(asistente.usuario).select({ email: 1, img: 1, profesional: 1, nombre: 1 });
+        asistentes.push(user);
+    }
+
+    return res.json({
+        msg: "200 OK",
+        asistentes
+    });
+})
+
 // Obtener los eventos disponibles: Fecha superior a hoy + si personal que no esté cogido
 router.get("/evento/disponibles", verificarToken, async(req, res, next) => {
     try {

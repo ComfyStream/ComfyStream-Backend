@@ -1,9 +1,10 @@
 const { Router } = require("express");
 const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
+const Asistencia = require("../models/asistencia");
 const verificarToken = require("../tools/verificarToken");
 const EventoFotos = require("../tools/evento-fotos");
-
+const mongoose = require("mongoose");
 
 const router = Router();
 const eventoFotos = new EventoFotos();
@@ -30,6 +31,33 @@ router.get("/mis-eventos", verificarToken, async(req, res) => {
         eventos
     });
 })
+
+// Obtener los eventos disponibles: Fecha superior a hoy + si personal que no esté cogido
+router.get("/evento/disponibles", verificarToken, async(req, res, next) => {
+    try {
+
+        var respuesta = [];
+
+        const eventos = await Evento.find({ fecha: { $gte: new Date()} });
+
+        for (const evento of eventos) {
+            if (evento.esPersonal) {
+                const check = await Asistencia.find({ evento: mongoose.Types.ObjectId(evento._id) });
+                if (check.length == 0) {
+                    respuesta.push(evento);
+                }
+            } else {
+                respuesta.push(evento)
+            }
+        }
+
+        return res.json({
+            respuesta
+        })
+    } catch (e) {
+        return next(e)
+    }
+});
 
 router.post("/evento/nuevo", verificarToken, async(req, resp) => {
     // if (!req.files)

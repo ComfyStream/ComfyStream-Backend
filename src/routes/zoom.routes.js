@@ -186,7 +186,6 @@ router.post("/zoom/room", verificarToken, async(req, res, next) => {
 
         const respuestaParseada = JSON.parse(respuesta.body);
 
-        console.log(req);
         const zoomDatosReunion = new ZoomDatosReunion({
             userId: usuario._id,
             eventoId: req.body._id,

@@ -79,21 +79,26 @@ router.get("/evento/disponibles", async(req, res, next) => {
 });
 
 router.post("/evento/nuevo", verificarToken, async(req, resp) => {
-    // if (!req.files)
-    //     return resp.json({ msg: "No se han enviado archivos" });
-    // const { img } = req.files
-    // if (!img.mimetype.includes("image"))
-    //     return resp.json({ msg: "No se ha subido ninguna imagen" });
     let datos = req.body;
     const idProfesional = req.usuario._id;
     const profesional = await Usuario.findById(idProfesional);
     datos.profesional = profesional;
     let evento = await Evento.create(datos);
-    // await eventoFotos.asignarFoto(img, String(profesional._id), String(evento._id));
-    // const fotoEvento = eventoFotos.getFoto(String(profesional._id), String(evento._id));
-    evento = await Evento.findById(String(evento._id));
-    // evento.img = fotoEvento;
-    await Evento.findByIdAndUpdate(String(evento._id), evento, { new: true });
+    resp.json({
+        msg: "Exito",
+        evento
+    });
+})
+
+router.post("/evento/editar", verificarToken, async(req, resp) => {
+    const profesional = req.usuario;
+    const { id } = req.body;
+    const misEventos = await Evento.find({ profesional });
+    const encontrado = misEventos.filter(e => e._id == id);
+    if (encontrado.length == 0) {
+        return resp.json({ msg: "El evento no es tuyo" })
+    }
+    const evento = await Evento.findByIdAndUpdate(id, req.body, { new: true })
     resp.json({
         msg: "Exito",
         evento

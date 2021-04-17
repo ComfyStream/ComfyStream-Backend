@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const Evento = require("../models/evento");
 const Usuario = require("../models/usuario");
+const Asistencia = require("../models/asistencia");
 const verificarToken = require("../tools/verificarToken");
 const EventoFotos = require("../tools/evento-fotos");
 
@@ -61,18 +62,30 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
 })
 
 router.post("/buscador", async(req, res) => {
+    var eventosDisponibles = [];
+
 
     const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax } = req.body;
-    let eventos = await Evento.find({ titulo: new RegExp(titulo) });
+    let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: 'es', strength: 2 });
+    for (const evento of eventos) {
+        if (evento.esPersonal) {
+            const check = await Asistencia.find({ evento: evento._id });
+            if (check.length == 0) {
+                eventosDisponibles.push(evento);
+            }
+        } else {
+            eventosDisponibles.push(evento);
+        }
+    }
 
-    if (categoria) eventos = eventos.filter(e => e.categoria == categoria);
-    if (precioMin) eventos = eventos.filter(e => e.precio >= precioMin);
-    if (precioMax) eventos = eventos.filter(e => e.precio <= precioMax);
-    if (fechaMin) eventos = eventos.filter(e => new Date(e.fecha) >= new Date(fechaMin));
-    if (fechaMax) eventos = eventos.filter(e => new Date(e.fecha) <= new Date(fechaMax));
+    if (categoria) eventosDisponibles = eventosDisponibles.filter(e => e.categoria == categoria);
+    if (precioMin) eventosDisponibles = eventosDisponibles.filter(e => e.precio >= precioMin);
+    if (precioMax) eventosDisponibles = eventosDisponibles.filter(e => e.precio <= precioMax);
+    if (fechaMin) eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) >= new Date(fechaMin));
+    if (fechaMax) eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) <= new Date(fechaMax));
     return res.json({
         msg: "200 OK",
-        eventos
+        eventosDisponibles
     });
 })
 

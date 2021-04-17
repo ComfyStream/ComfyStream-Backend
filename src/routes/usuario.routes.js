@@ -4,6 +4,7 @@ const verificarToken = require("../tools/verificarToken");
 const ZoomDatosUsuarios = require("../models/zoomDatosUsuarios");
 const Token = require("../tools/token");
 const UsuarioFotos = require('../tools/usuario-fotos')
+const bcryptjs = require("bcryptjs");
 
 const usuarioFotos = new UsuarioFotos()
 
@@ -63,15 +64,11 @@ router.post("/registro", async(req, resp) => {
     const emailEncontrado = await Usuario.find({ email })
     const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN })
 
-    if (emailEncontrado.length > 0 && bancoEncontrado.length > 0) {
-        return resp.json({
-            msg: "El email y la cuenta bancaria ya están en uso"
-        })
-    } else if (emailEncontrado.length > 0) {
+    if (emailEncontrado.length > 0) {
         return resp.json({
             msg: "El email ya está en uso"
         })
-    } else if (bancoEncontrado.length > 0) {
+    } else if (cuentaBancariaIBAN && bancoEncontrado.length > 0) {
         return resp.json({
             msg: "Esta cuenta bancaria ya está en uso"
         })
@@ -85,6 +82,45 @@ router.post("/registro", async(req, resp) => {
             msg: "Registro realizado con éxito",
             usuario,
             token: Token.getJwtToken(usuario)
+        })
+    }
+})
+
+router.post("/editar-perfil", verificarToken, async(req, resp) => {
+
+    // if (!req.files)
+    //     return res.json({ msg: "No se han enviado archivos" })
+    // const { img } = req.files
+    // if (!img.mimetype.includes('image'))
+    //     return res.json({ msg: "No se ha subido ninguna imagen" })
+    const usuario = req.usuario
+    const { email, cuentaBancariaIBAN, password } = req.body
+    const emailEncontrado = await Usuario.find({ email })
+    const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN })
+   
+
+    if (emailEncontrado.length > 0 && email!=usuario.email) {
+        return resp.json({
+            msg: "El email ya está en uso"
+        })
+    } else if (bancoEncontrado.length > 0 && cuentaBancariaIBAN!=usuario.cuentaBancariaIBAN && cuentaBancariaIBAN) {
+        return resp.json({
+            msg: "Esta cuenta bancaria ya está en uso"
+        })
+    } else {
+        
+        // await usuarioFotos.asignarFoto(img, String(usuario._id))
+        // const fotoUsuario = usuarioFotos.getFoto(String(usuario._id))
+        // usuario.img = fotoUsuario
+        if(password){
+            req.body.password = bcryptjs.hashSync(password, 10)
+        }
+        
+        const usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario._id), req.body, { new: true })
+        return resp.json({
+            msg: "Perfil actualizado con éxito",
+            usuarioActualizado,
+            token: Token.getJwtToken(usuarioActualizado)
         })
     }
 })

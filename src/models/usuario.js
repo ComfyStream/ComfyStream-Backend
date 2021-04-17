@@ -29,19 +29,15 @@ const usuarioSchema = Schema({
     },
     sector: {
         type: String,
-        required: true
     },
     descripcion: {
         type: String,
-        required: true
     },
     cuentaBancariaIBAN: {
         type: String,
-        required: true
     },
     titularCuenta: {
         type: String,
-        required: true
     }
 });
 

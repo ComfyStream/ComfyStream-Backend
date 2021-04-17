@@ -114,7 +114,6 @@ router.delete("/zoom/token", verificarToken, async(req, res, next) => {
 });
 
 // Refresca un token de Zoom a partir del correo del usuario
-
 router.post("/zoom/token/refresh", verificarToken, async(req, res, next) => {
     try {
         const usuario = req.usuario;
@@ -158,7 +157,6 @@ router.post("/zoom/token/refresh", verificarToken, async(req, res, next) => {
     "fecha": "2021-03-24T16:54:14Z",
     "duracion": 60
 */
-
 router.post("/zoom/room", verificarToken, async(req, res, next) => {
     try {
         const usuario = req.usuario;
@@ -188,7 +186,6 @@ router.post("/zoom/room", verificarToken, async(req, res, next) => {
 
         const respuestaParseada = JSON.parse(respuesta.body);
 
-        console.log(req);
         const zoomDatosReunion = new ZoomDatosReunion({
             userId: usuario._id,
             eventoId: req.body._id,
@@ -218,7 +215,6 @@ router.post("/zoom/room", verificarToken, async(req, res, next) => {
         return next(e);
     }
 });
-
 
 
 router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {

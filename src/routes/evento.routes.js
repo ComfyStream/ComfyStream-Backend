@@ -60,9 +60,14 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
     res.sendFile(pathCompleto);
 })
 
-router.get("/buscador", async(req, res) => {
-    const evento_buscado = req.body.titulo
-    const eventos = await Evento.find({titulo:new RegExp(evento_buscado)}) 
+router.post("/buscador", async(req, res) => {
+    const { categoria, precioMin, precioMax, fechaMin, fechaMax } = req.body
+    let eventos = await Evento.find()
+    if (categoria) eventos = eventos.filter(e => e.categoria == categoria)
+    if (precioMin) eventos = eventos.filter(e => e.precio >= precioMin)
+    if (precioMax) eventos = eventos.filter(e => e.precio <= precioMax)
+    if (fechaMin) eventos = eventos.filter(e => new Date(e.fecha) >= new Date(fechaMin))
+    if (fechaMax) eventos = eventos.filter(e => new Date(e.fecha) <= new Date(fechaMax))
     return res.json({
         msg: "200 OK",
         eventos

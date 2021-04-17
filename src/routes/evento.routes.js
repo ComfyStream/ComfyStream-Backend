@@ -112,4 +112,22 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
     res.sendFile(pathCompleto);
 })
 
+router.delete("/evento/eliminar", verificarToken, async(req, resp) => {
+    const { id } = req.body;
+    const evento = await Evento.findById(id);
+    const usuario = req.usuario;
+    if (usuario._id != evento.profesional) {
+        return resp.json({ msg: "No es un evento tuyo" });
+    }
+
+    const asistencias = await Asistencia.find({ evento });
+    if (asistencias.length > 0) {
+        return resp.json({ msg: "Este eventos ya tiene asistencias" })
+    }
+
+    await Evento.findByIdAndDelete(id);
+
+    return resp.json({ msg: "Borrado con éxito" });
+})
+
 module.exports = router;

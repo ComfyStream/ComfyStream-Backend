@@ -79,21 +79,26 @@ router.get("/evento/disponibles", async(req, res, next) => {
 });
 
 router.post("/evento/nuevo", verificarToken, async(req, resp) => {
-    // if (!req.files)
-    //     return resp.json({ msg: "No se han enviado archivos" });
-    // const { img } = req.files
-    // if (!img.mimetype.includes("image"))
-    //     return resp.json({ msg: "No se ha subido ninguna imagen" });
     let datos = req.body;
     const idProfesional = req.usuario._id;
     const profesional = await Usuario.findById(idProfesional);
     datos.profesional = profesional;
     let evento = await Evento.create(datos);
-    // await eventoFotos.asignarFoto(img, String(profesional._id), String(evento._id));
-    // const fotoEvento = eventoFotos.getFoto(String(profesional._id), String(evento._id));
-    evento = await Evento.findById(String(evento._id));
-    // evento.img = fotoEvento;
-    await Evento.findByIdAndUpdate(String(evento._id), evento, { new: true });
+    resp.json({
+        msg: "Exito",
+        evento
+    });
+})
+
+router.post("/evento/editar", verificarToken, async(req, resp) => {
+    const profesional = req.usuario;
+    const { id } = req.body;
+    const misEventos = await Evento.find({ profesional });
+    const encontrado = misEventos.filter(e => e._id == id);
+    if (encontrado.length == 0) {
+        return resp.json({ msg: "El evento no es tuyo" })
+    }
+    const evento = await Evento.findByIdAndUpdate(id, req.body, { new: true })
     resp.json({
         msg: "Exito",
         evento
@@ -105,6 +110,24 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
     const foto = eventoFotos.getFoto(usuarioId, req.params.eventoId);
     const pathCompleto = `${path}/${foto}`;
     res.sendFile(pathCompleto);
+})
+
+router.delete("/evento/eliminar", verificarToken, async(req, resp) => {
+    const { id } = req.body;
+    const evento = await Evento.findById(id);
+    const usuario = req.usuario;
+    if (usuario._id != evento.profesional) {
+        return resp.json({ msg: "No es un evento tuyo" });
+    }
+
+    const asistencias = await Asistencia.find({ evento });
+    if (asistencias.length > 0) {
+        return resp.json({ msg: "Este eventos ya tiene asistencias" })
+    }
+
+    await Evento.findByIdAndDelete(id);
+
+    return resp.json({ msg: "Borrado con éxito" });
 })
 
 module.exports = router;

@@ -27,6 +27,7 @@ app.use("/comfystream/api", require("../routes/chat.routes"));
 // Refrescamos los tokens de Zoom cada 30 minutos
 setInterval(refrescoTokenZoom, 1000 * 60 * 30);
 
+
 //Inicio del servidor
 function iniciarServidor() {
     app.listen(app.get("puerto"), () => console.log(`Servidor activo en puerto ${app.get("puerto")}`));

@@ -15,7 +15,7 @@ const mensajeSchema = new Schema({
     },
     fecha: {
         type: Date,
-        default: new Date()
+        required: true
     },
 });
 

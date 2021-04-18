@@ -9,6 +9,10 @@ const asistenciaSchema = Schema({
     evento: {
         type: Schema.Types.ObjectId,
         ref: "Evento"
+    },
+    pagoPaypalUrl: {
+        type: String,
+        required: true
     }
 
 });

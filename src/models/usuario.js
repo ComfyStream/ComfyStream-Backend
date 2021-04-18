@@ -29,19 +29,15 @@ const usuarioSchema = Schema({
     },
     sector: {
         type: String,
-        required: true
     },
     descripcion: {
         type: String,
-        required: true
     },
     cuentaBancariaIBAN: {
         type: String,
-        required: true
     },
     titularCuenta: {
         type: String,
-        required: true
     }
 });
 
@@ -51,7 +47,6 @@ usuarioSchema.pre("save", function(next) {
 });
 
 usuarioSchema.method("compararPassword", async function(password) {
-    console.log(typeof(password), typeof(this.password))
     return await bcryptjs.compareSync(password, this.password)
 });
 

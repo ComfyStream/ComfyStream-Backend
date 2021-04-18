@@ -7,9 +7,9 @@ const Usuario = require("../models/usuario");
 const ZoomDatosUsuarios = require("../models/zoomDatosUsuarios");
 const ZoomDatosReunion = require("../models/zoomDatosReunion");
 
-const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
-const ZOOM_CLIENT_SECRET = "5j4pldvoGkaK1VWW3fn9oojvC7hzq9Op";
-const ZOOM_REDIRECT_URI = "https://comfystream-frontend-s1.web.app/landing";
+const ZOOM_CLIENT_ID = "XkwgnLlHRmS3IhiX21ic9Q";
+const ZOOM_CLIENT_SECRET = "5X5qb1AFYdUHM6kEzw0tF6vYxujzXIdi";
+const ZOOM_REDIRECT_URI = "https://comfystream-s2.web.app/landing";
 
 const router = Router()
 
@@ -230,5 +230,12 @@ router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {
         return next(e);
     };
 });
+
+//Comprueba que el usuario logado tiene enlazado un usuario de zoom
+router.get("/zoom/usuario-enlazado", verificarToken, async(req, resp) => {
+    const usuario = req.usuario
+    const usuarioZoom = await ZoomDatosUsuarios.find({ userId: usuario })
+    return resp.json({ encontrado: usuarioZoom.length > 0 })
+})
 
 module.exports = router

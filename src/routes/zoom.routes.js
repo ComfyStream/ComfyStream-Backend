@@ -231,7 +231,8 @@ router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {
     };
 });
 
-router.get("/zoom/usuario", verificarToken, async(req, resp) => {
+//Comprueba que el usuario logado tiene enlazado un usuario de zoom
+router.get("/zoom/usuario-enlazado", verificarToken, async(req, resp) => {
     const usuario = req.usuario
     const usuarioZoom = await ZoomDatosUsuarios.find({ userId: usuario })
     return resp.json({ encontrado: usuarioZoom.length > 0 })

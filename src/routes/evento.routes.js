@@ -140,8 +140,11 @@ router.post("/buscador", async(req, res) => {
         eventosDisponibles
     });
 
-router.delete("/evento/eliminar", verificarToken, async(req, resp) => {
-    const { id } = req.body;
+})
+
+
+router.delete("/evento/eliminar/:idEvento", verificarToken, async(req, resp) => {
+    const id = req.params.idEvento
     const evento = await Evento.findById(id);
     const usuario = req.usuario;
     if (usuario._id != evento.profesional) {

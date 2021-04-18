@@ -31,7 +31,11 @@ router.post("/mensaje/nuevo", verificarToken, async(req, resp) => {
     const autor = req.usuario;
     const { chatId, cuerpo } = req.body;
     const chat = await Chat.findById(chatId);
-    const fecha = new Date().toLocaleString("es-ES", { timeZone: "Europe/Madrid" });
+    Date.prototype.addHours = function(h) {
+        this.setHours(this.getHours() + h);
+        return this;
+    }
+    const fecha = new Date().addHours(2)
     const mensaje = await Mensaje.create({ chat, autor, cuerpo, fecha });
     resp.json({ mensaje });
 })

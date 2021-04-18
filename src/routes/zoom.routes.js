@@ -15,7 +15,7 @@ const router = Router()
 
 // Devuelve la URL en la que se solicita los datos de login de Zoom al usuario.
 // Tras finalizar correctamente, devuelve un código en la url del landing page.
-router.get("/zoom/token", verificarToken, async(req, res, next) => {
+router.get("/zoom/token", async(req, res, next) => {
     try {
         const uri = "https://zoom.us/oauth/authorize" +
             "?response_type=code" +

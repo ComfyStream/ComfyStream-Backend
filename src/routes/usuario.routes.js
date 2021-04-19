@@ -54,11 +54,11 @@ router.get("/usuarioZoom", verificarToken, async(req, res) => {
 
 router.post("/registro", async(req, resp) => {
 
-    if (!req.files)
-        return res.json({ msg: "No se han enviado archivos" })
-    const { img } = req.files
-    if (!img.mimetype.includes('image'))
-        return res.json({ msg: "No se ha subido ninguna imagen" })
+    // if (!req.files)
+    //     return res.json({ msg: "No se han enviado archivos" })
+    // const { img } = req.files
+    // if (!img.mimetype.includes('image'))
+    //     return res.json({ msg: "No se ha subido ninguna imagen" })
 
     const { email, cuentaBancariaIBAN } = req.body
     const emailEncontrado = await Usuario.find({ email })
@@ -74,15 +74,15 @@ router.post("/registro", async(req, resp) => {
         })
     } else {
         const usuario = await Usuario.create(req.body)
-        await usuarioFotos.asignarFoto(img, String(usuario._id))
-        const fotoUsuario = usuarioFotos.getFoto(String(usuario._id))
-        usuario.img = fotoUsuario
+            // await usuarioFotos.asignarFoto(img, String(usuario._id))
+            // const fotoUsuario = usuarioFotos.getFoto(String(usuario._id))
+            // usuario.img = fotoUsuario
         await Usuario.findByIdAndUpdate(String(usuario._id), usuario, { new: true })
         return resp.json({
             msg: "Registro realizado con éxito",
-            usuario,
+            usuario: usuario,
             token: Token.getJwtToken(usuario)
-        })
+        });
     }
 })
 
@@ -97,25 +97,25 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
     const { email, cuentaBancariaIBAN, password } = req.body
     const emailEncontrado = await Usuario.find({ email })
     const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN })
-   
 
-    if (emailEncontrado.length > 0 && email!=usuario.email) {
+
+    if (emailEncontrado.length > 0 && email != usuario.email) {
         return resp.json({
             msg: "El email ya está en uso"
         })
-    } else if (bancoEncontrado.length > 0 && cuentaBancariaIBAN!=usuario.cuentaBancariaIBAN && cuentaBancariaIBAN) {
+    } else if (bancoEncontrado.length > 0 && cuentaBancariaIBAN != usuario.cuentaBancariaIBAN && cuentaBancariaIBAN) {
         return resp.json({
             msg: "Esta cuenta bancaria ya está en uso"
         })
     } else {
-        
+
         // await usuarioFotos.asignarFoto(img, String(usuario._id))
         // const fotoUsuario = usuarioFotos.getFoto(String(usuario._id))
         // usuario.img = fotoUsuario
-        if(password){
+        if (password) {
             req.body.password = bcryptjs.hashSync(password, 10)
         }
-        
+
         const usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario._id), req.body, { new: true })
         return resp.json({
             msg: "Perfil actualizado con éxito",

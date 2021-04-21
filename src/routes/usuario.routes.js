@@ -18,7 +18,9 @@ router.post("/login", async(req, res) => {
     const coincide = await usuario.compararPassword(req.body.password)
     if (!coincide)
         return res.json({ msg: "Password incorrecta" });
-    res.json({
+    if (!usuario.confirmado)
+        return res.json({ msg: "Debe confirmar su cuenta" });
+    return res.json({
         msg: "Login realizado con exito",
         usuarioId: usuario._id,
         token: Token.getJwtToken(usuario),

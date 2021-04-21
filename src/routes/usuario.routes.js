@@ -91,7 +91,7 @@ router.post("/registro", async(req, resp) => {
             subject: "Confirmación de cuenta de usuario de ComfyStream",
             html: `<p>
             ¡Muy buenas! Haz click en la siguiente ruta para confirmar tu cuenta de usuario: 
-            <a href="https://comfystream-s3.web.app/comfystream/api/confirmar/${datos.urlConfirmacion}">https://comfystream-s3.web.app/comfystream/api/confirmar/${datos.urlConfirmacion}</a>
+            <a href="https://comfystream-s3.web.app/confirmar/${datos.urlConfirmacion}">https://comfystream-s3.web.app/confirmar/${datos.urlConfirmacion}</a>
             </p>`
         };
 

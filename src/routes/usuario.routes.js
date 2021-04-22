@@ -127,9 +127,9 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
 
 router.post("/usuario/cambiar/pass", verificarToken, async(req, resp) => {
     try {
-        const { email, nuevaContraseña, anteriorContraseña } = req.body
+        const { nuevaContraseña, anteriorContraseña } = req.body;
     
-        const usuario = await Usuario.findOne({ email: email });
+        const usuario = req.usuario;
     
         const coincide = await usuario.compararPassword(anteriorContraseña)
         if (!coincide)
@@ -150,11 +150,11 @@ router.post("/usuario/cambiar/pass", verificarToken, async(req, resp) => {
 
 router.post("/usuario/cambiar/banco", verificarToken, async(req, resp) => {
     try {
-        const { email, nuevoIBAN, contraseña } = req.body
+
+        const usuario = req.usuario;
+        const { email, nuevoIBAN, contraseña } = req.body;
     
-        const usuario = await Usuario.findOne({ email: email });
-    
-        const coincide = await usuario.compararPassword(contraseña)
+        const coincide = await usuario.compararPassword(contraseña);
         if (!coincide)
             return resp.json({ msg: "Password incorrecta" });
     

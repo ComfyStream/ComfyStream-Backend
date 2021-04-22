@@ -125,5 +125,52 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
     }
 })
 
+router.post("/usuario/cambiar/pass", verificarToken, async(req, resp) => {
+    try {
+        const { email, nuevaContraseña, anteriorContraseña } = req.body
+    
+        const usuario = await Usuario.findOne({ email: email });
+    
+        const coincide = await usuario.compararPassword(anteriorContraseña)
+        if (!coincide)
+            return resp.json({ msg: "Password incorrecta" });
+    
+        usuario.password = nuevaContraseña;
+    
+        await usuario.save();
+    
+        return resp.json({
+            msg: "Contraseña actualizada con éxito",
+            usuario
+        });
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.post("/usuario/cambiar/banco", verificarToken, async(req, resp) => {
+    try {
+        const { email, nuevoIBAN, contraseña } = req.body
+    
+        const usuario = await Usuario.findOne({ email: email });
+    
+        const coincide = await usuario.compararPassword(contraseña)
+        if (!coincide)
+            return resp.json({ msg: "Password incorrecta" });
+    
+        usuario.cuentaBancariaIBAN = nuevoIBAN;
+        usuario.password = contraseña;
+    
+        await usuario.save();
+    
+        return resp.json({
+            msg: "IBAN actualizado con éxito",
+            usuario
+        });
+    } catch (error) {
+        return next(error);
+    }
+});
+
 
 module.exports = router;

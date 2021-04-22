@@ -5,8 +5,9 @@ const ZoomDatosUsuarios = require("../models/zoomDatosUsuarios");
 const Token = require("../tools/token");
 const UsuarioFotos = require('../tools/usuario-fotos')
 const bcryptjs = require("bcryptjs");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
-const usuarioFotos = new UsuarioFotos()
 
 const router = Router();
 
@@ -17,7 +18,9 @@ router.post("/login", async(req, res) => {
     const coincide = await usuario.compararPassword(req.body.password)
     if (!coincide)
         return res.json({ msg: "Password incorrecta" });
-    res.json({
+    if (!usuario.confirmado)
+        return res.json({ msg: "Debe confirmar su cuenta" });
+    return res.json({
         msg: "Login realizado con exito",
         usuarioId: usuario._id,
         token: Token.getJwtToken(usuario),
@@ -53,13 +56,8 @@ router.get("/usuarioZoom", verificarToken, async(req, res) => {
 })
 
 router.post("/registro", async(req, resp) => {
-
-    // if (!req.files)
-    //     return res.json({ msg: "No se han enviado archivos" })
-    // const { img } = req.files
-    // if (!img.mimetype.includes('image'))
-    //     return res.json({ msg: "No se ha subido ninguna imagen" })
-
+    let datos = req.body
+    datos.valoracionMedia = 0
     const { email, cuentaBancariaIBAN } = req.body
     const emailEncontrado = await Usuario.find({ email })
     const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN })
@@ -73,26 +71,46 @@ router.post("/registro", async(req, resp) => {
             msg: "Esta cuenta bancaria ya está en uso"
         })
     } else {
-        const usuario = await Usuario.create(req.body)
-            // await usuarioFotos.asignarFoto(img, String(usuario._id))
-            // const fotoUsuario = usuarioFotos.getFoto(String(usuario._id))
-            // usuario.img = fotoUsuario
-        await Usuario.findByIdAndUpdate(String(usuario._id), usuario, { new: true })
-        return resp.json({
-            msg: "Registro realizado con éxito",
-            usuario: usuario,
-            token: Token.getJwtToken(usuario)
+        datos.urlConfirmacion = crypto.randomBytes(100).toString('hex');
+        datos.confirmado = false;
+
+        var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "comfystreamcontact@gmail.com",
+                pass: "Grupo2ispp."
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        const mailOptions = {
+            from: "comfystreamcontact@gmail.com",
+            to: email,
+            subject: "Confirmación de cuenta de usuario de ComfyStream",
+            html: `<p>
+            ¡Muy buenas! Haz click en la siguiente ruta para confirmar tu cuenta de usuario: 
+            <a href="https://comfystream-s3.web.app/confirmar/${datos.urlConfirmacion}">https://comfystream-s3.web.app/confirmar/${datos.urlConfirmacion}</a>
+            </p>`
+        };
+
+        transporter.sendMail(mailOptions, async function(error, info) {
+            if (error) {
+                return resp.json({ msg: error.message })
+            } else {
+                const usuario = await Usuario.create(datos);
+                return resp.json({
+                    msg: "Registro realizado con éxito",
+                    usuario: usuario,
+                    token: Token.getJwtToken(usuario)
+                })
+            }
         });
     }
 })
 
 router.post("/editar-perfil", verificarToken, async(req, resp) => {
-
-    // if (!req.files)
-    //     return res.json({ msg: "No se han enviado archivos" })
-    // const { img } = req.files
-    // if (!img.mimetype.includes('image'))
-    //     return res.json({ msg: "No se ha subido ninguna imagen" })
     const usuario = req.usuario
     const { email, cuentaBancariaIBAN, password } = req.body
     const emailEncontrado = await Usuario.find({ email })
@@ -108,14 +126,9 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
             msg: "Esta cuenta bancaria ya está en uso"
         })
     } else {
-
-        // await usuarioFotos.asignarFoto(img, String(usuario._id))
-        // const fotoUsuario = usuarioFotos.getFoto(String(usuario._id))
-        // usuario.img = fotoUsuario
         if (password) {
             req.body.password = bcryptjs.hashSync(password, 10)
         }
-
         const usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario._id), req.body, { new: true })
         return resp.json({
             msg: "Perfil actualizado con éxito",
@@ -124,6 +137,17 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
         })
     }
 })
+
+router.put("/confirmar/:urlConfirmacion", async(req, resp) => {
+    const { urlConfirmacion } = req.params;
+    console.log(urlConfirmacion)
+    const usuario = await Usuario.find({ urlConfirmacion })
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario[0]._id), { $set: { confirmado: true } }, { new: true })
+    return resp.json({
+        msg: "Usuario confirmado",
+        usuarioActualizado
+    })
+});
 
 
 module.exports = router;

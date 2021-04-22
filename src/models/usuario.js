@@ -38,6 +38,15 @@ const usuarioSchema = Schema({
     },
     titularCuenta: {
         type: String,
+    },
+    valoracionMedia: {
+        type: Number
+    },
+    urlConfirmacion: {
+        type: String
+    },
+    confirmado: {
+        type: Boolean
     }
 });
 

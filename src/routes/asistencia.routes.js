@@ -8,7 +8,8 @@ const router = Router();
 router.post("/asistencia/nuevo", verificarToken, async(req, resp) => {
     const usuario = req.usuario;
     const evento = await Evento.findById(req.body.eventoId);
-    const asistencia = await Asistencia.create({ usuario, evento });
+    const pagoPaypalUrl = req.body.pagoPaypalUrl;
+    const asistencia = await Asistencia.create({ usuario, evento, pagoPaypalUrl });
     return resp.json({
         msg: "Exito",
         asistencia

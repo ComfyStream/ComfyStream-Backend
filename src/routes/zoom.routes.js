@@ -7,15 +7,15 @@ const Usuario = require("../models/usuario");
 const ZoomDatosUsuarios = require("../models/zoomDatosUsuarios");
 const ZoomDatosReunion = require("../models/zoomDatosReunion");
 
-const ZOOM_CLIENT_ID = "BqYXOyymQ_OGhBXQKV653A";
-const ZOOM_CLIENT_SECRET = "5j4pldvoGkaK1VWW3fn9oojvC7hzq9Op";
-const ZOOM_REDIRECT_URI = "https://comfystream-frontend-s1.web.app/landing";
+const ZOOM_CLIENT_ID = "XkwgnLlHRmS3IhiX21ic9Q";
+const ZOOM_CLIENT_SECRET = "5X5qb1AFYdUHM6kEzw0tF6vYxujzXIdi";
+const ZOOM_REDIRECT_URI = "https://comfystream-s2.web.app/landing";
 
 const router = Router()
 
 // Devuelve la URL en la que se solicita los datos de login de Zoom al usuario.
 // Tras finalizar correctamente, devuelve un código en la url del landing page.
-router.get("/zoom/token", verificarToken, async(req, res, next) => {
+router.get("/zoom/token", async(req, res, next) => {
     try {
         const uri = "https://zoom.us/oauth/authorize" +
             "?response_type=code" +
@@ -114,7 +114,6 @@ router.delete("/zoom/token", verificarToken, async(req, res, next) => {
 });
 
 // Refresca un token de Zoom a partir del correo del usuario
-
 router.post("/zoom/token/refresh", verificarToken, async(req, res, next) => {
     try {
         const usuario = req.usuario;
@@ -158,7 +157,6 @@ router.post("/zoom/token/refresh", verificarToken, async(req, res, next) => {
     "fecha": "2021-03-24T16:54:14Z",
     "duracion": 60
 */
-
 router.post("/zoom/room", verificarToken, async(req, res, next) => {
     try {
         const usuario = req.usuario;
@@ -188,7 +186,6 @@ router.post("/zoom/room", verificarToken, async(req, res, next) => {
 
         const respuestaParseada = JSON.parse(respuesta.body);
 
-        console.log(req);
         const zoomDatosReunion = new ZoomDatosReunion({
             userId: usuario._id,
             eventoId: req.body._id,
@@ -220,7 +217,6 @@ router.post("/zoom/room", verificarToken, async(req, res, next) => {
 });
 
 
-
 router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {
     try {
 
@@ -234,5 +230,12 @@ router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {
         return next(e);
     };
 });
+
+//Comprueba que el usuario logado tiene enlazado un usuario de zoom
+router.get("/zoom/usuario-enlazado", verificarToken, async(req, resp) => {
+    const usuario = req.usuario
+    const usuarioZoom = await ZoomDatosUsuarios.find({ userId: usuario })
+    return resp.json({ encontrado: usuarioZoom.length > 0 })
+})
 
 module.exports = router

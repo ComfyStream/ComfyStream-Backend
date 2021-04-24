@@ -137,7 +137,6 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
         })
     }
 })
-
 router.put("/confirmar/:urlConfirmacion", async(req, resp) => {
     const { urlConfirmacion } = req.params;
     console.log(urlConfirmacion)
@@ -147,6 +146,60 @@ router.put("/confirmar/:urlConfirmacion", async(req, resp) => {
         msg: "Usuario confirmado",
         usuarioActualizado
     })
+});
+
+router.post("/usuario/cambiar/pass", verificarToken, async(req, resp, next) => {
+    try {
+        const { nuevaPassword, password } = req.body;
+
+
+        const usuario = await Usuario.findOne({ email: req.usuario.email });
+
+        const coincide = await usuario.compararPassword(password)
+        if (!coincide)
+            return resp.json({ msg: "Password incorrecta" });
+     else{
+        usuario.password = nuevaPassword;
+
+        await usuario.save();
+
+        return resp.json({
+            msg: "Contraseña actualizada con éxito",
+            usuario
+        });
+     }
+
+    } catch (error) {
+        return next(error);
+    }
+});
+
+router.post("/usuario/cambiar/banco", verificarToken, async(req, resp ,next) => {
+    try {
+
+        const usuario = await Usuario.findOne({ email: req.usuario.email });
+        const { titular, cuenta, contrasena } = req.body;
+        console.log(contrasena);
+        console.log(usuario);
+        const coincide = await usuario.compararPassword(contrasena);
+        if (!coincide)
+            return resp.json({ msg: "Password incorrecta" });
+    else{
+        usuario.cuentaBancariaIBAN = cuenta;
+        usuario.titularCuenta = titular;
+        delete usuario.password;
+
+        await usuario.save();
+
+        return resp.json({
+            msg: "IBAN actualizado con éxito",
+            usuario
+        });
+    }
+
+    } catch (error) {
+        return next(error);
+    }
 });
 
 

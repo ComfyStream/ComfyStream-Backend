@@ -25,6 +25,10 @@ const valoracionSchema = new Schema({
     nombreAutor: {
         type: String,
         required: true
+    },
+    nombreProfesional: {
+        type: String,
+        required: true
     }
 });
 

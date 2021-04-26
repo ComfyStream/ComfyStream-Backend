@@ -139,7 +139,6 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
 })
 router.put("/confirmar/:urlConfirmacion", async(req, resp) => {
     const { urlConfirmacion } = req.params;
-    console.log(urlConfirmacion)
     const usuario = await Usuario.find({ urlConfirmacion })
     const usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario[0]._id), { $set: { confirmado: true } }, { new: true })
     return resp.json({
@@ -158,44 +157,42 @@ router.post("/usuario/cambiar/pass", verificarToken, async(req, resp, next) => {
         const coincide = await usuario.compararPassword(password)
         if (!coincide)
             return resp.json({ msg: "Password incorrecta" });
-     else{
-        usuario.password = nuevaPassword;
+        else {
+            usuario.password = nuevaPassword;
 
-        await usuario.save();
+            await usuario.save();
 
-        return resp.json({
-            msg: "Contraseña actualizada con éxito",
-            usuario
-        });
-     }
+            return resp.json({
+                msg: "Contraseña actualizada con éxito",
+                usuario
+            });
+        }
 
     } catch (error) {
         return next(error);
     }
 });
 
-router.post("/usuario/cambiar/banco", verificarToken, async(req, resp ,next) => {
+router.post("/usuario/cambiar/banco", verificarToken, async(req, resp, next) => {
     try {
 
         const usuario = await Usuario.findOne({ email: req.usuario.email });
         const { titular, cuenta, contrasena } = req.body;
-        console.log(contrasena);
-        console.log(usuario);
         const coincide = await usuario.compararPassword(contrasena);
         if (!coincide)
             return resp.json({ msg: "Password incorrecta" });
-    else{
-        usuario.cuentaBancariaIBAN = cuenta;
-        usuario.titularCuenta = titular;
-        delete usuario.password;
+        else {
+            usuario.cuentaBancariaIBAN = cuenta;
+            usuario.titularCuenta = titular;
+            delete usuario.password;
 
-        await usuario.save();
+            await usuario.save();
 
-        return resp.json({
-            msg: "IBAN actualizado con éxito",
-            usuario
-        });
-    }
+            return resp.json({
+                msg: "IBAN actualizado con éxito",
+                usuario
+            });
+        }
 
     } catch (error) {
         return next(error);

@@ -18,7 +18,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
     let encontrado = false;
     for (let i = 0; i < misAsistencias.length; i++) {
         const asistencia = misAsistencias[i];
-        const coinciden = eventosProfesional.filter(e => String(e._id) == String(asistencia.evento._id));
+        let coinciden = eventosProfesional.filter(e => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter(e => new Date(e.fecha) < new Date())
             if (coinciden.length > 0) {
@@ -43,7 +43,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
         return this;
     };
     const fecha = new Date().addHours(2);
-    const valoracion = await Valoracion.create({ autor, profesional, mensaje, estrellas, fecha, nombreAutor: autor.nombre });
+    const valoracion = await Valoracion.create({ autor, profesional, mensaje, estrellas, fecha, nombreAutor: autor.nombre, nombreProfesional: profesional.nombre });
     const valoracionesProfesional = await Valoracion.find({ profesional });
     let media = 0;
     for (let i = 0; i < valoracionesProfesional.length; i++) {
@@ -70,7 +70,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
     let encontrado = false;
     for (let i = 0; i < misAsistencias.length; i++) {
         const asistencia = misAsistencias[i];
-        const coinciden = eventosProfesional.filter(e => String(e._id) == String(asistencia.evento._id));
+        let coinciden = eventosProfesional.filter(e => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter(e => new Date(e.fecha) < new Date())
             if (coinciden.length > 0) {
@@ -138,9 +138,8 @@ router.get("/valoraciones-recibidas/:id", async(req, resp) => {
     });
 });
 
-router.get("/mis-valoraciones/:id", async(req, resp) => {
-    const { id } = req.params;
-    const autor = await Usuario.findById(id);
+router.get("/mis-valoraciones", verificarToken, async(req, resp) => {
+    const autor = req.usuario;
     const valoraciones = await Valoracion.find({ autor });
     return resp.json({
         msg: "Exito",

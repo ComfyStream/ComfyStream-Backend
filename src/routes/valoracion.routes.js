@@ -51,7 +51,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
         media += valoracion.estrellas;
     }
     media /= valoracionesProfesional.length;
-    const usuarioAct = await Usuario.findByIdAndUpdate(id, { $set: { valoracionMedia: media } }, { new: true });
+    const usuarioAct = await Usuario.findByIdAndUpdate(id, { $set: { valoracionMedia: media, numeroValoraciones: valoracionesProfesional.length } }, { new: true });
     return resp.json({
         msg: "Valoración creada",
         valoracion,
@@ -118,9 +118,9 @@ router.delete("/valoracion/eliminar/:id", verificarToken, async(req, resp) => {
     }
     media /= valoracionesProfesional.length;
     if (isNaN(media)) {
-        await Usuario.findByIdAndUpdate(profesional, { $set: { valoracionMedia: 0 } }, { new: true });
+        await Usuario.findByIdAndUpdate(profesional, { $set: { valoracionMedia: 0, numeroValoraciones: 0 } }, { new: true });
     } else {
-        await Usuario.findByIdAndUpdate(profesional, { $set: { valoracionMedia: media } }, { new: true });
+        await Usuario.findByIdAndUpdate(profesional, { $set: { valoracionMedia: media, numeroValoraciones: valoracionesProfesional.length } }, { new: true });
     }
 
 

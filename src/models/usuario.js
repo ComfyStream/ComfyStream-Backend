@@ -44,6 +44,12 @@ const usuarioSchema = Schema({
     },
     valoracionMedia: {
         type: Number
+    },
+    urlConfirmacion: {
+        type: String
+    },
+    confirmado: {
+        type: Boolean
     }
 });
 

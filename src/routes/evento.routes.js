@@ -117,7 +117,7 @@ router.post("/buscador", async(req, res) => {
     var eventosDisponibles = [];
 
 
-    const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax } = req.body;
+    const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax, estrellas } = req.body;
     let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: 'es', strength: 2 });
     for (const evento of eventos) {
         if (evento.esPersonal) {
@@ -135,6 +135,25 @@ router.post("/buscador", async(req, res) => {
     if (precioMax) eventosDisponibles = eventosDisponibles.filter(e => e.precio <= precioMax);
     if (fechaMin) eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) >= new Date(fechaMin));
     if (fechaMax) eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) <= new Date(fechaMax));
+
+
+    if (estrellas) {
+        let profesionales = []
+        for (let i = 0; i < eventosDisponibles.length; i++) {
+            const evento = eventosDisponibles[i];
+            const profesional = await Usuario.findById(evento.profesional)
+            profesionales.push(profesional)
+        }
+
+        eventosDisponibles = eventosDisponibles.filter(e => {
+            let col = profesionales
+            col = col.filter(p => String(p._id) == String(e.profesional))
+            profesional = col[0]
+            return profesional.valoracionMedia != undefined && profesional.valoracionMedia >= estrellas
+        })
+
+    }
+
     return res.json({
         msg: "200 OK",
         eventosDisponibles

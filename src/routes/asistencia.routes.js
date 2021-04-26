@@ -29,4 +29,23 @@ router.get("/mis-asistencias", verificarToken, async(req, resp) => {
     });
 })
 
+//Obtiene todas las asistencias (id, evento y url de pago)
+router.get("/asistencias/pagos", async(req, resp) => {
+    const asistencias = await Asistencia.find({ }).populate("evento");
+    
+    return resp.json({
+        asistencias
+    });
+})
+
+//Obtiene asistencias (id, evento y url de pago) por id de usuario
+router.post("/asistencias/pagos/id", async(req, resp) => {
+    const usuario = req.body.usuario;
+    const asistencias = await Asistencia.find({ usuario }).populate("evento");
+    
+    return resp.json({
+        asistencias
+    });
+})
+
 module.exports = router;

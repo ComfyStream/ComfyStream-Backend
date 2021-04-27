@@ -50,6 +50,9 @@ const usuarioSchema = Schema({
     },
     confirmado: {
         type: Boolean
+    },
+    numeroValoraciones: {
+        type: Number
     }
 });
 

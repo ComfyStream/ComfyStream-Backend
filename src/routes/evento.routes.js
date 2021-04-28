@@ -17,6 +17,9 @@ router.get("/eventos", async(req, resp) => {
     });
 })
 router.post("/evento", async(req, res) => {
+
+
+
     const evento = await Evento.findById(req.body._id)
     return res.json({
         msg: "200 OK",
@@ -134,7 +137,11 @@ router.post("/buscador", async(req, res) => {
     if (precioMin) eventosDisponibles = eventosDisponibles.filter(e => e.precio >= precioMin);
     if (precioMax) eventosDisponibles = eventosDisponibles.filter(e => e.precio <= precioMax);
     if (fechaMin) eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) >= new Date(fechaMin));
-    if (fechaMax) eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) <= new Date(fechaMax));
+    if (fechaMax) eventosDisponibles = eventosDisponibles.filter(e => {
+        let nuevaFechaMax = new Date(fechaMax);
+        nuevaFechaMax.setDate(nuevaFechaMax.getDate() + 1);
+        return new Date(e.fecha) <= nuevaFechaMax;
+    });
 
 
     if (estrellas) {

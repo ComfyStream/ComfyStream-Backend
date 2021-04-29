@@ -13,6 +13,10 @@ const asistenciaSchema = Schema({
     pagoPaypalUrl: {
         type: String,
         required: true
+    },
+    fecha_compra: {
+        type: Date,
+        required: true
     }
 
 });

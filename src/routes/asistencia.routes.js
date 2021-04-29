@@ -34,7 +34,7 @@ router.get("/mis-asistencias", verificarToken, async(req, resp) => {
 
 //Obtiene por evento: ID de asistencia y hora de compra, ID y nombre del comprador, ID del profesional
 //y título y precio del evento
-router.post("/asistencias/pagos/id", async(req, resp) => {
+router.post("/asistencias/pagos/id", verificarToken, async(req, resp) => {
 
     var eventos = [];
 

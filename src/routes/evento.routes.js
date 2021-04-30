@@ -17,6 +17,9 @@ router.get("/eventos", async(req, resp) => {
     });
 })
 router.post("/evento", async(req, res) => {
+
+
+
     const evento = await Evento.findById(req.body._id)
     return res.json({
         msg: "200 OK",

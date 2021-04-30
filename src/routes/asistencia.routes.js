@@ -12,7 +12,7 @@ router.post("/asistencia/nuevo", verificarToken, async(req, resp) => {
     const evento = await Evento.findById(req.body.eventoId);
     const pagoPaypalUrl = req.body.pagoPaypalUrl;
     const fecha_compra = new Date();
-    const asistencia = await Asistencia.create({ usuario, evento, pagoPaypalUrl, fecha_compra});
+    const asistencia = await Asistencia.create({ usuario, evento, pagoPaypalUrl, fecha_compra });
     return resp.json({
         msg: "Exito",
         asistencia
@@ -37,20 +37,20 @@ router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
     try {
 
         const admin = req.usuario;
-        if(admin.admin == false) return next("Error, se requieren permisos de administrador");
+        if (admin.admin == false) return next("Error, se requieren permisos de administrador");
 
         const asistencias = [];
-        const eventos = await Evento.find({ });
+        const eventos = await Evento.find({});
 
         for (const evento of eventos) {
             const resq = [];
             const asistencias_evento = await Asistencia.find({ evento: evento }).populate("evento");
             if (asistencias_evento.length == 0) continue;
 
-            for(const asist of asistencias_evento) {
+            for (const asist of asistencias_evento) {
                 const usuario = await Usuario.findById(mongoose.Types.ObjectId(asist.usuario));
                 const profesional = await Usuario.findById(mongoose.Types.ObjectId(asist.evento.profesional));
-                resq.push({
+                asistencias.push({
                     "titulo_evento": asist.evento.titulo,
                     "asistente": usuario.nombre,
                     "profesional": profesional.nombre,
@@ -59,10 +59,10 @@ router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
                     "paypalId": asist.pagoPaypalUrl
                 });
             };
-            if(resq.length == 0) continue;
-            asistencias.push(resq);
+            // if (resq.length == 0) continue;
+            // asistencias.push(resq);
         };
-        
+
         return res.json({
             asistencias
         });

@@ -32,31 +32,43 @@ router.get("/mis-asistencias", verificarToken, async(req, resp) => {
     });
 })
 
-//Obtiene por evento: ID de asistencia y hora de compra, ID y nombre del comprador, ID del profesional
-//y título y precio del evento
-router.post("/asistencias/pagos/id", verificarToken, async(req, resp) => {
+//Obtiene por evento: titulo_evento, asistente, profesional, fecha_compra, precio_evento, paypalId
+router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
+    try {
 
-    var eventos = [];
+        const admin = req.usuario;
+        if(admin.admin == false) return next("Error, se requieren permisos de administrador");
 
-    const evento = req.body.eventoId;
-    const asistencias = await Asistencia.find({ evento: evento }).populate("evento profesional");
+        const asistencias = [];
+        const eventos = await Evento.find({ });
 
-    for(const asist of asistencias) {
-        const usuario = await Usuario.findById(mongoose.Types.ObjectId(asist.usuario));
-        eventos.push({
-            "asistencia_id": asist._id,
-            "fecha_compra": asist.fecha_compra,
-            "comprador_id": usuario.id,
-            "comprador_nombre": usuario.nombre,
-            "profesional_id": asist.evento.profesional,
-            "titulo_evento": asist.evento.titulo,
-            "precio_evento": asist.evento.precio
+        for (const evento of eventos) {
+            const resq = [];
+            const asistencias_evento = await Asistencia.find({ evento: evento }).populate("evento");
+            if (asistencias_evento.length == 0) continue;
+
+            for(const asist of asistencias_evento) {
+                const usuario = await Usuario.findById(mongoose.Types.ObjectId(asist.usuario));
+                const profesional = await Usuario.findById(mongoose.Types.ObjectId(asist.evento.profesional));
+                resq.push({
+                    "titulo_evento": asist.evento.titulo,
+                    "asistente": usuario.nombre,
+                    "profesional": profesional.nombre,
+                    "fecha_compra": asist.fecha_compra,
+                    "precio_evento": asist.evento.precio,
+                    "paypalId": asist.pagoPaypalUrl
+                });
+            };
+            if(resq.length == 0) continue;
+            asistencias.push(resq);
+        };
+        
+        return res.json({
+            asistencias
         });
+    } catch (error) {
+        return next(error);
     }
-    
-    return resp.json({
-        eventos
-    });
 })
 
 module.exports = router;

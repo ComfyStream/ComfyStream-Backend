@@ -96,7 +96,7 @@ router.post("/evento/editar", verificarToken, async (req, res) => {
 
     if (encontrado.length === 0) {
         return res.json({ msg: "El evento no es tuyo" });
-    };
+    }
 
     const evento = await Evento.findByIdAndUpdate(id, req.body, { new: true });
 

@@ -69,8 +69,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
     const misValoraciones = await Valoracion.find({ autor });
 
     let encontrado = false;
-    for (let i = 0; i < misAsistencias.length; i++) {
-        const asistencia = misAsistencias[i];
+    for (let asistencia of misAsistencias) {
         let coinciden = eventosProfesional.filter(e => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter(e => new Date(e.fecha) < new Date())
@@ -85,8 +84,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
         return resp.json({ puede: false });
     }
 
-    for (let i = 0; i < misValoraciones.length; i++) {
-        const valoracion = misValoraciones[i];
+    for (let valoracion of misValoraciones) {
         if (String(valoracion.profesional._id) == String(profesional._id)) {
             return resp.json({ puede: false })
         }

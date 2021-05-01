@@ -31,7 +31,7 @@ function refrescoTokenZoom() {
 
                     usuario.save();
                 }
-            };
+            }
         } catch (error) {
             console.log("Error: " + error)
         }

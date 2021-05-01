@@ -9,7 +9,7 @@ async function iniciarBaseDeDatos() {
         useCreateIndex: true
     })
     console.log("Conectado a MongoDB");
-};
+}
 
 module.exports = {
     iniciarBaseDeDatos

@@ -56,7 +56,7 @@ router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
                 "paypalId": asist.pagoPaypalUrl
             });
         }
-    };
+    }
 
     return res.json({
         asistencias

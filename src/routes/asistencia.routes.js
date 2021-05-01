@@ -23,8 +23,8 @@ router.get("/mis-asistencias", verificarToken, async(req, resp) => {
     const usuario = req.usuario;
     const asistencias = await Asistencia.find({ usuario }).populate("evento");
     let eventos = [];
-    for (let i = 0; i < asistencias.length; i++) {
-        const asistencia = asistencias[i];
+    
+    for(let asistencia of asistencias) {
         eventos.push(asistencia.evento);
     }
     return resp.json({

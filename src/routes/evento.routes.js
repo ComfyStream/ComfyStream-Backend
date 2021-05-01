@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const router = Router();
 const eventoFotos = new EventoFotos();
 
-router.get("/eventos", async(req, resp) => {
+router.get("/eventos", async (req, resp) => {
     const eventos = await Evento.find();
 
     return resp.json({
@@ -18,7 +18,7 @@ router.get("/eventos", async(req, resp) => {
     });
 });
 
-router.post("/evento", async(req, res) => {
+router.post("/evento", async (req, res) => {
     const evento = await Evento.findById(req.body._id);
 
     return res.json({
@@ -27,7 +27,7 @@ router.post("/evento", async(req, res) => {
     });
 });
 
-router.get("/mis-eventos", verificarToken, async(req, res) => {
+router.get("/mis-eventos", verificarToken, async (req, res) => {
     const eventos = await Evento.find({ profesional: req.usuario._id });
 
     return res.json({
@@ -37,7 +37,7 @@ router.get("/mis-eventos", verificarToken, async(req, res) => {
 });
 
 // Obtiene los usuarios que asisten al evento pasado como parámetro
-router.post("/evento/asistentes", verificarToken, async(req, res) => {
+router.post("/evento/asistentes", verificarToken, async (req, res) => {
     var asistentes = []
 
     const idAsistentes = await Asistencia.find({ evento: mongoose.Types.ObjectId(req.body.eventoId)});
@@ -54,7 +54,7 @@ router.post("/evento/asistentes", verificarToken, async(req, res) => {
 });
 
 // Obtener los eventos disponibles: Fecha superior a hoy + si personal que no esté cogido
-router.get("/evento/disponibles", async(req, res) => {
+router.get("/evento/disponibles", async (req, res) => {
     var respuesta = [];
     const eventos = await Evento.find({ fecha: { $gte: new Date() } });
 
@@ -67,14 +67,14 @@ router.get("/evento/disponibles", async(req, res) => {
         } else {
             respuesta.push(evento);
         }
-    };
+    }
 
     return res.json({
         respuesta
     });
 });
 
-router.post("/evento/nuevo", verificarToken, async(req, res) => {
+router.post("/evento/nuevo", verificarToken, async (req, res) => {
     const profesional = await Usuario.findById(req.usuario._id);
 
     let datos = req.body;
@@ -88,7 +88,7 @@ router.post("/evento/nuevo", verificarToken, async(req, res) => {
     });
 });
 
-router.post("/evento/editar", verificarToken, async(req, res) => {
+router.post("/evento/editar", verificarToken, async (req, res) => {
     const profesional = req.usuario;
     const { id } = req.body;
     const misEventos = await Evento.find({ profesional });
@@ -114,7 +114,7 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
     res.sendFile(pathCompleto);
 });
 
-router.post("/buscador", async(req, res) => {
+router.post("/buscador", async (req, res) => {
     var eventosDisponibles = [];
     const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax, estrellas } = req.body;
     let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: 'es', strength: 2 });
@@ -122,7 +122,7 @@ router.post("/buscador", async(req, res) => {
     for (const evento of eventos) {
         if (evento.esPersonal) {
             const check = await Asistencia.find({ evento: evento._id });
-            if (check.length == 0) {
+            if (check.length === 0) {
                 eventosDisponibles.push(evento);
             }
         } else {
@@ -142,8 +142,7 @@ router.post("/buscador", async(req, res) => {
 
     if (estrellas) {
         let profesionales = []
-        for (let i = 0; i < eventosDisponibles.length; i++) {
-            const evento = eventosDisponibles[i];
+        for (let evento of eventosDisponibles) {
             const profesional = await Usuario.findById(evento.profesional)
             profesionales.push(profesional)
         }
@@ -162,7 +161,7 @@ router.post("/buscador", async(req, res) => {
     });
 });
 
-router.delete("/evento/eliminar/:idEvento", verificarToken, async(req, resp) => {
+router.delete("/evento/eliminar/:idEvento", verificarToken, async (req, resp) => {
     const id = req.params.idEvento
     const evento = await Evento.findById(id);
     const usuario = req.usuario;

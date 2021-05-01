@@ -14,16 +14,16 @@ router.post("/login", async(req, res) => {
     const usuario = await Usuario.findOne({ email: req.body.email });
     if (!usuario) {
         return res.json({ msg: "No se ha encontrado el usuario" });
-    };
+    }
 
     const coincide = await usuario.compararPassword(req.body.password)
     if (!coincide) {
         return res.json({ msg: "Password incorrecta" });
-    };
+    }
 
     if (!usuario.confirmado) {
         return res.json({ msg: "Debe confirmar su cuenta" });
-    };
+    }
 
     return res.json({
         msg: "Login realizado con exito",

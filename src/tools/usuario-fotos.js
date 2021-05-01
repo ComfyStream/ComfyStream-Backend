@@ -1,5 +1,5 @@
-const path = require('path');
-const fs = require('fs');
+const path = require("path");
+const fs = require("fs");
 
 class UsuarioFotos {
 
@@ -42,7 +42,7 @@ class UsuarioFotos {
 
     getCarpetaFoto(usuarioId) {
         const pathUsuario = this.getCarpetaUsuario(usuarioId);
-        const pathFoto = pathUsuario + '/foto';
+        const pathFoto = pathUsuario + "/foto";
         const existeFoto = fs.existsSync(pathFoto);
         if (!existeFoto) {
             fs.mkdirSync(pathFoto);

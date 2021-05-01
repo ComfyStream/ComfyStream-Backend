@@ -13,9 +13,10 @@ class Token {
             jwt.verify(token, this.seed, (err, decoded) => {
                 if (err) {
                     reject();
-                } 
-                else resolve(decoded);
-            })
+                } else { 
+                    resolve(decoded);
+                }
+            });
         });
     }
 }

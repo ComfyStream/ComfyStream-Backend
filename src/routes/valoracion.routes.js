@@ -70,7 +70,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
 
     let encontrado = false;
     for (let asistencia of misAsistencias) {
-        let coinciden = eventosProfesional.filter(e => String(e._id) == String(asistencia.evento._id));
+        let coinciden = eventosProfesional.filter((e) => String(e._id) === String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter((e) => new Date(e.fecha) < new Date());
             if (coinciden.length > 0) {

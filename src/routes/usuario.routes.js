@@ -113,7 +113,7 @@ router.post("/registro", async(req, resp) => {
             }
         });
     }
-})
+});
 
 router.post("/editar-perfil", verificarToken, async(req, resp) => {
     const usuario = req.usuario;

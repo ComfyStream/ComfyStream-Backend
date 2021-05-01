@@ -92,7 +92,7 @@ router.post("/evento/editar", verificarToken, async (req, res) => {
     const profesional = req.usuario;
     const { id } = req.body;
     const misEventos = await Evento.find({ profesional });
-    const encontrado = misEventos.filter((e) => e._id == id);
+    const encontrado = misEventos.filter((e) => e._id === id);
 
     if (encontrado.length === 0) {
         return res.json({ msg: "El evento no es tuyo" });

@@ -64,8 +64,10 @@ router.post("/zoom/token", verificarToken, async(req, res, next) => {
 router.delete("/zoom/token", verificarToken, async(req, res, next) => {
     const usuario = req.usuario;
 
-    if (!usuario) return next(new Error("No existen datos del usuario"))
-
+    if (!usuario) {
+        return next(new Error("No existen datos del usuario"));
+    }
+    
     const datosZoomUsuario = await ZoomDatosUsuarios.deleteOne({ userId: mongoose.Types.ObjectId(usuario._id) });
     if (datosZoomUsuario.deletedCount === 0) return next(new Error("No existen datos de Zoom del usuario"))
 
@@ -164,7 +166,7 @@ router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {
 
     return res.json({
         msg: "200 Ok",
-        zoomDatosUsuarios: zoomDatosUsuarios
+        zoomDatosUsuarios
     });
 });
 

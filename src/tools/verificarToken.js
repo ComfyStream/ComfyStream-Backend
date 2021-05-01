@@ -11,6 +11,6 @@ const verificarToken = (req, res, next) => {
             msg: "Token incorrecto"
         });
     });
-}
+};
 
 module.exports = verificarToken;

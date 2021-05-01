@@ -15,7 +15,7 @@ router.post("/login", async(req, res) => {
         return res.json({ msg: "No se ha encontrado el usuario" });
     }
 
-    const coincide = await usuario.compararPassword(req.body.password)
+    const coincide = await usuario.compararPassword(req.body.password);
     if (!coincide) {
         return res.json({ msg: "Password incorrecta" });
     }
@@ -58,7 +58,7 @@ router.get("/usuarioZoom", verificarToken, async(req, res) => {
         msg: "200 ok",
         usuarioZoom
     });
-})
+});
 
 router.post("/registro", async(req, resp) => {
     let datos = req.body;
@@ -107,7 +107,7 @@ router.post("/registro", async(req, resp) => {
                 const usuario = await Usuario.create(datos);
                 return resp.json({
                     msg: "Registro realizado con éxito",
-                    usuario: usuario,
+                    usuario,
                     token: Token.getJwtToken(usuario)
                 });
             }
@@ -125,7 +125,7 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
         return resp.json({
             msg: "El email ya está en uso"
         });
-    } else if (bancoEncontrado.length > 0 && cuentaBancariaIBAN != usuario.cuentaBancariaIBAN && cuentaBancariaIBAN) {
+    } else if (bancoEncontrado.length > 0 && cuentaBancariaIBAN !== usuario.cuentaBancariaIBAN && cuentaBancariaIBAN) {
         return resp.json({
             msg: "Esta cuenta bancaria ya está en uso"
         });

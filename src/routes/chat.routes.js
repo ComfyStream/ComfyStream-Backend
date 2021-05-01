@@ -32,8 +32,8 @@ router.post("/mensaje/nuevo", verificarToken, async(req, resp) => {
     Date.prototype.addHours = function(h) {
         this.setHours(this.getHours() + h);
         return this;
-    }
-    const fecha = new Date().addHours(2)
+    };
+    const fecha = new Date().addHours(2);
     const mensaje = await Mensaje.create({ chat, autor, cuerpo, fecha });
     resp.json({ mensaje });
 });

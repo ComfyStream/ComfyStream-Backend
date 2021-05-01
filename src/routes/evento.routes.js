@@ -117,7 +117,7 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
 router.post("/buscador", async (req, res) => {
     var eventosDisponibles = [];
     const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax, estrellas } = req.body;
-    let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: 'es', strength: 2 });
+    let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: "es", strength: 2 });
 
     for (const evento of eventos) {
         if (evento.esPersonal) {
@@ -161,7 +161,7 @@ router.post("/buscador", async (req, res) => {
             profesionales.push(profesional);
         }
 
-        eventosDisponibles = eventosDisponibles.filter(e => {
+        eventosDisponibles = eventosDisponibles.filter((e) => {
             let col = profesionales;
             col = col.filter((p) => String(p._id) === String(e.profesional));
             profesional = col[0];
@@ -180,7 +180,7 @@ router.delete("/evento/eliminar/:idEvento", verificarToken, async (req, resp) =>
     const evento = await Evento.findById(id);
     const usuario = req.usuario;
 
-    if (usuario._id != evento.profesional) {
+    if (usuario._id !== evento.profesional) {
         return resp.json({ msg: "No es un evento tuyo" });
     }
 
@@ -188,7 +188,7 @@ router.delete("/evento/eliminar/:idEvento", verificarToken, async (req, resp) =>
 
     if (asistencias.length > 0) {
         return resp.json({ msg: "Este eventos ya tiene asistencias" });
-    };
+    }
 
     await Evento.findByIdAndDelete(id);
 

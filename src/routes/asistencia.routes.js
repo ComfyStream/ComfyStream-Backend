@@ -43,8 +43,10 @@ router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
     const eventos = await Evento.find({});
 
     for (const evento of eventos) {
-        const asistencias_evento = await Asistencia.find({ evento: evento }).populate("evento");
-        if (asistencias_evento.length === 0) continue;
+        const asistencias_evento = await Asistencia.find({ evento }).populate("evento");
+        if (asistencias_evento.length === 0) {
+            continue;
+        }
 
         for (const asist of asistencias_evento) {
             const usuario = await Usuario.findById(mongoose.Types.ObjectId(asist.usuario));

@@ -26,7 +26,7 @@ class UsuarioFotos {
     }
 
     eliminaFoto(path, foto) {
-        const pathCompleto = path + `/${foto}`
+        const pathCompleto = path + `/${foto}`;
         try {
             fs.unlinkSync(pathCompleto);
         } catch (err) {

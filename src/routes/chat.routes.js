@@ -13,16 +13,14 @@ router.get("/mis-chats", verificarToken, async(req, resp) => {
 })
 
 router.get("/chat/:chatId", async(req, resp) => {
-    const { chatId } = req.params;
-    const chat = await Chat.findById(chatId);
+    const chat = await Chat.findById(req.params.chatId);
     const mensajes = await Mensaje.find({ chat });
     resp.json({ mensajes });
 })
 
 router.post("/chat/nuevo", verificarToken, async(req, resp) => {
     const usuario1 = req.usuario;
-    const { usuario2ID } = req.body;
-    const usuario2 = await Usuario.findById(usuario2ID);
+    const usuario2 = await Usuario.findById(req.body.usuario2ID);
     const chat = await Chat.create({ usuario1, usuario2 });
     resp.json({ chat });
 })
@@ -42,8 +40,7 @@ router.post("/mensaje/nuevo", verificarToken, async(req, resp) => {
 
 router.post("/chat/existe", verificarToken, async(req, resp) => {
     const usuario1 = req.usuario;
-    const { usuario2ID } = req.body;
-    const usuario2 = await Usuario.findById(usuario2ID);
+    const usuario2 = await Usuario.findById(req.body.usuario2ID);
     const chats1 = await Chat.find({ usuario1, usuario2 });
     const chats2 = await Chat.find({ usuario1: usuario2, usuario2: usuario1 });
     resp.json({ encontrado: chats1.length > 0 || chats2.length > 0 });

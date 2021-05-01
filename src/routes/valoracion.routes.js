@@ -20,13 +20,14 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
         const asistencia = misAsistencias[i];
         let coinciden = eventosProfesional.filter(e => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
-            coinciden = coinciden.filter(e => new Date(e.fecha) < new Date())
+            coinciden = coinciden.filter(e => new Date(e.fecha) < new Date());
             if (coinciden.length > 0) {
                 encontrado = true;
                 break;
             }
         }
     }
+
     if (!encontrado) {
         return resp.json({ msg: "No tienes asistencias para los eventos de este profesional" });
     }
@@ -42,14 +43,17 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
         this.setHours(this.getHours() + h);
         return this;
     };
+
     const fecha = new Date().addHours(2);
     const valoracion = await Valoracion.create({ autor, profesional, mensaje, estrellas, fecha, nombreAutor: autor.nombre, nombreProfesional: profesional.nombre });
     const valoracionesProfesional = await Valoracion.find({ profesional });
     let media = 0;
+
     for (let i = 0; i < valoracionesProfesional.length; i++) {
         const valoracion = valoracionesProfesional[i];
         media += valoracion.estrellas;
     }
+
     media /= valoracionesProfesional.length;
     const usuarioAct = await Usuario.findByIdAndUpdate(id, { $set: { valoracionMedia: media, numeroValoraciones: valoracionesProfesional.length } }, { new: true });
     return resp.json({
@@ -79,6 +83,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
             }
         }
     }
+
     if (!encontrado) {
         return resp.json({ puede: false });
     }
@@ -91,7 +96,6 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
     }
 
     return resp.json({ puede: true })
-
 });
 
 router.delete("/valoracion/eliminar/:id", verificarToken, async(req, resp) => {
@@ -116,14 +120,13 @@ router.delete("/valoracion/eliminar/:id", verificarToken, async(req, resp) => {
         const valoracion = valoracionesProfesional[i];
         media += valoracion.estrellas;
     }
+
     media /= valoracionesProfesional.length;
     if (isNaN(media)) {
         await Usuario.findByIdAndUpdate(profesional, { $set: { valoracionMedia: 0, numeroValoraciones: 0 } }, { new: true });
     } else {
         await Usuario.findByIdAndUpdate(profesional, { $set: { valoracionMedia: media, numeroValoraciones: valoracionesProfesional.length } }, { new: true });
     }
-
-
 
     return resp.json({ msg: "Valoración eliminada" });
 });
@@ -132,6 +135,7 @@ router.get("/valoraciones-recibidas/:id", async(req, resp) => {
     const { id } = req.params;
     const profesional = await Usuario.findById(id);
     const valoraciones = await Valoracion.find({ profesional });
+
     return resp.json({
         msg: "Exito",
         valoraciones
@@ -141,6 +145,7 @@ router.get("/valoraciones-recibidas/:id", async(req, resp) => {
 router.get("/mis-valoraciones", verificarToken, async(req, resp) => {
     const autor = req.usuario;
     const valoraciones = await Valoracion.find({ autor });
+    
     return resp.json({
         msg: "Exito",
         valoraciones

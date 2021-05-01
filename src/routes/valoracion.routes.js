@@ -33,7 +33,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
 
     for (let valoracion of misValoraciones) {
         if (String(valoracion.profesional._id) == String(profesional._id)) {
-            return resp.json({ msg: "Ya has valorado a este profesional" })
+            return resp.json({ msg: "Ya has valorado a este profesional" });
         }
     }
 

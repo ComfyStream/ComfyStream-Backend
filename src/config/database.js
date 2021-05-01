@@ -7,7 +7,7 @@ async function iniciarBaseDeDatos() {
         useNewUrlParser: true,
         useFindAndModify: false,
         useCreateIndex: true
-    })
+    });
     console.log("Conectado a MongoDB");
 }
 

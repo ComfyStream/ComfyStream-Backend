@@ -38,7 +38,7 @@ router.get("/mis-eventos", verificarToken, async (req, res) => {
 
 // Obtiene los usuarios que asisten al evento pasado como parámetro
 router.post("/evento/asistentes", verificarToken, async (req, res) => {
-    var asistentes = []
+    var asistentes = [];
 
     const idAsistentes = await Asistencia.find({ evento: mongoose.Types.ObjectId(req.body.eventoId)});
 
@@ -108,7 +108,7 @@ router.post("/evento/editar", verificarToken, async (req, res) => {
 
 router.get("/:usuarioId/:eventoId/img", (req, res) => {
     const path = eventoFotos.getCarpetaEventos(req.params.usuarioId);
-    const foto = eventoFotos.getFoto(usuarioId, req.params.eventoId);
+    const foto = eventoFotos.getFoto(req.params.usuarioId, req.params.eventoId);
     const pathCompleto = `${path}/${foto}`;
 
     res.sendFile(pathCompleto);
@@ -130,30 +130,44 @@ router.post("/buscador", async (req, res) => {
         }
     }
 
-    if (categoria) eventosDisponibles = eventosDisponibles.filter(e => e.categoria == categoria);
-    if (precioMin) eventosDisponibles = eventosDisponibles.filter(e => e.precio >= precioMin);
-    if (precioMax) eventosDisponibles = eventosDisponibles.filter(e => e.precio <= precioMax);
-    if (fechaMin) eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) >= new Date(fechaMin));
-    if (fechaMax) eventosDisponibles = eventosDisponibles.filter(e => {
-        let nuevaFechaMax = new Date(fechaMax);
-        nuevaFechaMax.setDate(nuevaFechaMax.getDate() + 1);
-        return new Date(e.fecha) <= nuevaFechaMax;
-    });
+    if (categoria) { 
+        eventosDisponibles = eventosDisponibles.filter(e => e.categoria == categoria);
+    }
+
+    if (precioMin) {
+        eventosDisponibles = eventosDisponibles.filter(e => e.precio >= precioMin);
+    }
+
+    if (precioMax) {
+        eventosDisponibles = eventosDisponibles.filter(e => e.precio <= precioMax);
+    } 
+
+    if (fechaMin) {
+        eventosDisponibles = eventosDisponibles.filter(e => new Date(e.fecha) >= new Date(fechaMin));
+    }
+
+    if (fechaMax) {
+        eventosDisponibles = eventosDisponibles.filter(e => {
+            let nuevaFechaMax = new Date(fechaMax);
+            nuevaFechaMax.setDate(nuevaFechaMax.getDate() + 1);
+            return new Date(e.fecha) <= nuevaFechaMax;
+        });
+    }
 
     if (estrellas) {
-        let profesionales = []
+        let profesionales = [];
         for (let evento of eventosDisponibles) {
-            const profesional = await Usuario.findById(evento.profesional)
-            profesionales.push(profesional)
+            const profesional = await Usuario.findById(evento.profesional);
+            profesionales.push(profesional);
         }
 
         eventosDisponibles = eventosDisponibles.filter(e => {
-            let col = profesionales
-            col = col.filter(p => String(p._id) == String(e.profesional))
-            profesional = col[0]
-            return profesional.valoracionMedia != undefined && profesional.valoracionMedia >= estrellas
+            let col = profesionales;
+            col = col.filter(p => String(p._id) == String(e.profesional));
+            profesional = col[0];
+            return profesional.valoracionMedia !== undefined && profesional.valoracionMedia >= estrellas;
         });
-    };
+    }
 
     return res.json({
         msg: "200 OK",
@@ -162,7 +176,7 @@ router.post("/buscador", async (req, res) => {
 });
 
 router.delete("/evento/eliminar/:idEvento", verificarToken, async (req, resp) => {
-    const id = req.params.idEvento
+    const id = req.params.idEvento;
     const evento = await Evento.findById(id);
     const usuario = req.usuario;
 

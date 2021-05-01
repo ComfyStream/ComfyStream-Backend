@@ -7,7 +7,6 @@ const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
-
 const router = Router();
 
 router.post("/login", async(req, res) => {
@@ -47,7 +46,7 @@ router.get("/usuario/:id", async(req, res) => {
 
     res.json({
         msg: "200 ok",
-        usuario: usuario
+        usuario
     });
 });
 
@@ -77,7 +76,7 @@ router.post("/registro", async(req, resp) => {
             msg: "Esta cuenta bancaria ya está en uso"
         });
     } else {
-        datos.urlConfirmacion = crypto.randomBytes(100).toString('hex');
+        datos.urlConfirmacion = crypto.randomBytes(100).toString("hex");
         datos.confirmado = false;
 
         var transporter = nodemailer.createTransport({
@@ -122,7 +121,7 @@ router.post("/editar-perfil", verificarToken, async(req, resp) => {
     const emailEncontrado = await Usuario.find({ email });
     const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN });
 
-    if (emailEncontrado.length > 0 && email != usuario.email) {
+    if (emailEncontrado.length > 0 && email !== usuario.email) {
         return resp.json({
             msg: "El email ya está en uso"
         });

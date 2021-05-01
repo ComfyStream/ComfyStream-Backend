@@ -3,32 +3,27 @@ const got = require("got");
 const mongoose = require("mongoose");
 const verificarToken = require("../tools/verificarToken");
 
-const Usuario = require("../models/usuario");
 const ZoomDatosUsuarios = require("../models/zoomDatosUsuarios");
 const ZoomDatosReunion = require("../models/zoomDatosReunion");
 
 const ZOOM_CLIENT_ID = "VT5sHWdTTMalMXqMqxQ5g";
 const ZOOM_CLIENT_SECRET = "I9MkD102Hq2VNO0chydCcTd77fpaX1F7";
-const ZOOM_REDIRECT_URI = "https://comfystream-s3.web.app/landing"
+const ZOOM_REDIRECT_URI = "https://comfystream-s3.web.app/landing";
 
-const router = Router()
+const router = Router();
 
 // Devuelve la URL en la que se solicita los datos de login de Zoom al usuario.
 // Tras finalizar correctamente, devuelve un código en la url del landing page.
 router.get("/zoom/token", async(req, res, next) => {
-    try {
-        const uri = "https://zoom.us/oauth/authorize" +
-            "?response_type=code" +
-            "&client_id=" + ZOOM_CLIENT_ID +
-            "&redirect_uri=" + ZOOM_REDIRECT_URI;
+    const uri = "https://zoom.us/oauth/authorize" +
+        "?response_type=code" +
+        "&client_id=" + ZOOM_CLIENT_ID +
+        "&redirect_uri=" + ZOOM_REDIRECT_URI;
 
-        return res.json({
-            msg: "200 Ok",
-            data: uri
-        });
-    } catch (e) {
-        return next(e);
-    }
+    return res.json({
+        msg: "200 Ok",
+        data: uri
+    });
 });
 
 // Procesado del código de zoom devuelto al landing page.
@@ -183,4 +178,4 @@ router.get("/zoom/usuario-enlazado", verificarToken, async(req, resp) => {
     });
 });
 
-module.exports = router
+module.exports = router;

@@ -12,8 +12,8 @@ class EventoFotos {
             imagen.mv(`${pathFoto}/${nombreFoto}`, (err) => {
                 if (err) reject(err);
                 else resolve();
-            })
-        })
+            });
+        });
     }
 
     getCarpetaEventos(usuarioId) {

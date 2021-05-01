@@ -35,7 +35,9 @@ router.get("/mis-asistencias", verificarToken, async(req, resp) => {
 //Obtiene por evento: titulo_evento, asistente, profesional, fecha_compra, precio_evento, paypalId
 router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
     const admin = req.usuario;
-    if (admin.admin === false) return next("Error, se requieren permisos de administrador");
+    if (admin.admin === false) {
+        return next("Error, se requieren permisos de administrador");
+    }
 
     const asistencias = [];
     const eventos = await Evento.find({});

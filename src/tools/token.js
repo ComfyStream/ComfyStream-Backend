@@ -11,13 +11,13 @@ class Token {
     static compararToken(token) {
         return new Promise((resolve, reject) => {
             jwt.verify(token, this.seed, (err, decoded) => {
-                if (err) reject()
-                else resolve(decoded)
+                if (err) {
+                    reject();
+                } 
+                else resolve(decoded);
             })
         });
     }
-
 }
-
 
 module.exports = Token;

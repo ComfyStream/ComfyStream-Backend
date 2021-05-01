@@ -128,7 +128,7 @@ router.post("/buscador", async (req, res) => {
         } else {
             eventosDisponibles.push(evento);
         }
-    };
+    }
 
     if (categoria) eventosDisponibles = eventosDisponibles.filter(e => e.categoria == categoria);
     if (precioMin) eventosDisponibles = eventosDisponibles.filter(e => e.precio >= precioMin);

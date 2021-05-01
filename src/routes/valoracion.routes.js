@@ -111,8 +111,7 @@ router.delete("/valoracion/eliminar/:id", verificarToken, async(req, resp) => {
     const valoracionesProfesional = await Valoracion.find({ profesional });
 
     let media = 0;
-    for (let i = 0; i < valoracionesProfesional.length; i++) {
-        const valoracion = valoracionesProfesional[i];
+    for (let valoracion of valoracionesProfesional) {
         media += valoracion.estrellas;
     }
 

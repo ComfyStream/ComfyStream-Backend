@@ -43,7 +43,9 @@ router.post("/zoom/token", verificarToken, async(req, res, next) => {
     const usuario = req.usuario;
     const preDatosZoom = await ZoomDatosUsuarios.findOne({ userId: mongoose.Types.ObjectId(usuario._id) });
 
-    if (preDatosZoom) return next(new Error("El usuario ya cuenta con datos de acceso a Zoom"))
+    if (preDatosZoom) {
+        return next(new Error("El usuario ya cuenta con datos de acceso a Zoom"));
+    } 
 
     const zoomDatosUsuarios = new ZoomDatosUsuarios({
         userId: usuario._id,

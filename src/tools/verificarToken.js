@@ -6,7 +6,7 @@ const verificarToken = (req, res, next) => {
     Token.compararToken(token).then((decoded) => {
         req.usuario = decoded.usuario;
         next();
-    }).catch(err => {
+    }).catch((err) => {
         res.json({
             msg: "Token incorrecto"
         });

@@ -103,7 +103,7 @@ router.delete("/valoracion/eliminar/:id", verificarToken, async(req, resp) => {
         return resp.json({ msg: "No existe la valoración" });
     }
 
-    if (valoracion.autor !== autor._id) {
+    if (valoracion.autor != autor._id) {
         return resp.json({ msg: "No has realizado esta valoración" });
     }
 
@@ -139,7 +139,7 @@ router.get("/valoraciones-recibidas/:id", async(req, resp) => {
 router.get("/mis-valoraciones", verificarToken, async(req, resp) => {
     const autor = req.usuario;
     const valoraciones = await Valoracion.find({ autor });
-    
+
     return resp.json({
         msg: "Exito",
         valoraciones

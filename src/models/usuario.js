@@ -57,12 +57,12 @@ const usuarioSchema = Schema({
 });
 
 usuarioSchema.pre("save", function(next) {
-    this.password = bcryptjs.hashSync(this.password, 10)
-    next()
+    this.password = bcryptjs.hashSync(this.password, 10);
+    next();
 });
 
 usuarioSchema.method("compararPassword", async function(password) {
-    return await bcryptjs.compareSync(password, this.password)
+    return await bcryptjs.compareSync(password, this.password);
 });
 
 module.exports = model("Usuario", usuarioSchema);

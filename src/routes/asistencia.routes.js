@@ -17,58 +17,54 @@ router.post("/asistencia/nuevo", verificarToken, async(req, resp) => {
         msg: "Exito",
         asistencia
     });
-})
+});
 
 router.get("/mis-asistencias", verificarToken, async(req, resp) => {
     const usuario = req.usuario;
     const asistencias = await Asistencia.find({ usuario }).populate("evento");
     let eventos = [];
-    for (let i = 0; i < asistencias.length; i++) {
-        const asistencia = asistencias[i];
+    
+    for(let asistencia of asistencias) {
         eventos.push(asistencia.evento);
     }
     return resp.json({
         eventos
     });
-})
+});
 
 //Obtiene por evento: titulo_evento, asistente, profesional, fecha_compra, precio_evento, paypalId
 router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
-    try {
-
-        const admin = req.usuario;
-        if (admin.admin == false) return next("Error, se requieren permisos de administrador");
-
-        const asistencias = [];
-        const eventos = await Evento.find({});
-
-        for (const evento of eventos) {
-            const resq = [];
-            const asistencias_evento = await Asistencia.find({ evento: evento }).populate("evento");
-            if (asistencias_evento.length == 0) continue;
-
-            for (const asist of asistencias_evento) {
-                const usuario = await Usuario.findById(mongoose.Types.ObjectId(asist.usuario));
-                const profesional = await Usuario.findById(mongoose.Types.ObjectId(asist.evento.profesional));
-                asistencias.push({
-                    "titulo_evento": asist.evento.titulo,
-                    "asistente": usuario.nombre,
-                    "profesional": profesional.nombre,
-                    "fecha_compra": asist.fecha_compra,
-                    "precio_evento": asist.evento.precio,
-                    "paypalId": asist.pagoPaypalUrl
-                });
-            };
-            // if (resq.length == 0) continue;
-            // asistencias.push(resq);
-        };
-
-        return res.json({
-            asistencias
-        });
-    } catch (error) {
-        return next(error);
+    const admin = req.usuario;
+    if (admin.admin === false) {
+        return next("Error, se requieren permisos de administrador");
     }
-})
+
+    const asistencias = [];
+    const eventos = await Evento.find({});
+
+    for (const evento of eventos) {
+        const asistencias_evento = await Asistencia.find({ evento }).populate("evento");
+        if (asistencias_evento.length === 0) {
+            continue;
+        }
+
+        for (const asist of asistencias_evento) {
+            const usuario = await Usuario.findById(mongoose.Types.ObjectId(asist.usuario));
+            const profesional = await Usuario.findById(mongoose.Types.ObjectId(asist.evento.profesional));
+            asistencias.push({
+                "titulo_evento": asist.evento.titulo,
+                "asistente": usuario.nombre,
+                "profesional": profesional.nombre,
+                "fecha_compra": asist.fecha_compra,
+                "precio_evento": asist.evento.precio,
+                "paypalId": asist.pagoPaypalUrl
+            });
+        }
+    }
+
+    return res.json({
+        asistencias
+    });
+});
 
 module.exports = router;

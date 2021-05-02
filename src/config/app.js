@@ -23,6 +23,7 @@ app.use("/comfystream/api", require("../routes/zoom.routes"));
 app.use("/comfystream/api", require("../routes/evento.routes"));
 app.use("/comfystream/api", require("../routes/asistencia.routes"));
 app.use("/comfystream/api", require("../routes/chat.routes"));
+app.use("/comfystream/api", require("../routes/valoracion.routes"));
 
 // Refrescamos los tokens de Zoom cada 30 minutos
 setInterval(refrescoTokenZoom, 1000 * 60 * 30);

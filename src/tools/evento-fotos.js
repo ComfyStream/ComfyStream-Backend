@@ -10,10 +10,13 @@ class EventoFotos {
             const pathFoto = this.getCarpetaEventos(usuarioId);
             const nombreFoto = this.generarNombreUnico(eventoId, imagen.mimetype);
             imagen.mv(`${pathFoto}/${nombreFoto}`, (err) => {
-                if (err) reject(err);
-                else resolve();
-            })
-        })
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 
     getCarpetaEventos(usuarioId) {
@@ -44,7 +47,7 @@ class EventoFotos {
     getFoto(usuarioId, eventoId) {
         const pathEventos = this.getCarpetaEventos(usuarioId);
         const col = fs.readdirSync(pathEventos);
-        const foto = col.filter(f => f.includes(eventoId));
+        const foto = col.filter((f) => f.includes(eventoId));
         return foto[0];
     }
 

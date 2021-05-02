@@ -38,16 +38,31 @@ const usuarioSchema = Schema({
     },
     titularCuenta: {
         type: String,
+    },
+    admin: {
+        type: Boolean
+    },
+    valoracionMedia: {
+        type: Number
+    },
+    urlConfirmacion: {
+        type: String
+    },
+    confirmado: {
+        type: Boolean
+    },
+    numeroValoraciones: {
+        type: Number
     }
 });
 
 usuarioSchema.pre("save", function(next) {
-    this.password = bcryptjs.hashSync(this.password, 10)
-    next()
+    this.password = bcryptjs.hashSync(this.password, 10);
+    next();
 });
 
 usuarioSchema.method("compararPassword", async function(password) {
-    return await bcryptjs.compareSync(password, this.password)
+    return await bcryptjs.compareSync(password, this.password);
 });
 
 module.exports = model("Usuario", usuarioSchema);

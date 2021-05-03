@@ -62,7 +62,7 @@ router.get("/evento/disponibles", async(req, res) => {
     for (const evento of eventos) {
         if (evento.esPersonal) {
             const check = await Asistencia.find({ evento: mongoose.Types.ObjectId(evento._id) });
-            if (check.length === 0) {
+            if (check.length == 0) {
                 respuesta.push(evento);
             }
         } else {
@@ -93,12 +93,12 @@ router.post("/evento/editar", verificarToken, async(req, res) => {
     const profesional = req.usuario;
     const { id } = req.body;
     const misEventos = await Evento.find({ profesional });
-    const encontrado = misEventos.filter((e) => e._id === id);
+    const encontrado = misEventos.filter((e) => e._id == id);
 
-    if (encontrado.length === 0) {
+    if (encontrado.length == 0) {
         return res.json({ msg: "El evento no es tuyo" });
     }
-
+    console.log("dsfdf");
     const evento = await Evento.findByIdAndUpdate(id, req.body, { new: true });
 
     res.json({
@@ -123,7 +123,7 @@ router.post("/buscador", async(req, res) => {
     for (const evento of eventos) {
         if (evento.esPersonal) {
             const check = await Asistencia.find({ evento: evento._id });
-            if (check.length === 0) {
+            if (check.length == 0) {
                 eventosDisponibles.push(evento);
             }
         } else {
@@ -132,7 +132,7 @@ router.post("/buscador", async(req, res) => {
     }
 
     if (categoria) {
-        eventosDisponibles = eventosDisponibles.filter((e) => e.categoria === categoria);
+        eventosDisponibles = eventosDisponibles.filter((e) => e.categoria == categoria);
     }
 
     if (precioMin) {
@@ -164,7 +164,7 @@ router.post("/buscador", async(req, res) => {
 
         eventosDisponibles = eventosDisponibles.filter((e) => {
             let col = profesionales;
-            col = col.filter((p) => String(p._id) === String(e.profesional));
+            col = col.filter((p) => String(p._id) == String(e.profesional));
             profesional = col[0];
             return profesional.valoracionMedia !== undefined && profesional.valoracionMedia >= estrellas;
         });
@@ -181,7 +181,7 @@ router.delete("/evento/eliminar/:idEvento", verificarToken, async(req, resp) => 
     const evento = await Evento.findById(id);
     const usuario = req.usuario;
 
-    if (usuario._id !== evento.profesional) {
+    if (usuario._id != evento.profesional) {
         return resp.json({ msg: "No es un evento tuyo" });
     }
 

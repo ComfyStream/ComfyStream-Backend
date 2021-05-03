@@ -23,8 +23,8 @@ router.get("/mis-asistencias", verificarToken, async(req, resp) => {
     const usuario = req.usuario;
     const asistencias = await Asistencia.find({ usuario }).populate("evento");
     let eventos = [];
-    
-    for(let asistencia of asistencias) {
+
+    for (let asistencia of asistencias) {
         eventos.push(asistencia.evento);
     }
     return resp.json({
@@ -35,7 +35,7 @@ router.get("/mis-asistencias", verificarToken, async(req, resp) => {
 //Obtiene por evento: titulo_evento, asistente, profesional, fecha_compra, precio_evento, paypalId
 router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
     const admin = req.usuario;
-    if (admin.admin === false) {
+    if (admin.admin == false) {
         return next("Error, se requieren permisos de administrador");
     }
 
@@ -44,7 +44,7 @@ router.get("/asistencias/pagos", verificarToken, async(req, res, next) => {
 
     for (const evento of eventos) {
         const asistencias_evento = await Asistencia.find({ evento }).populate("evento");
-        if (asistencias_evento.length === 0) {
+        if (asistencias_evento.length == 0) {
             continue;
         }
 

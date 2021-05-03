@@ -71,7 +71,7 @@ router.delete("/zoom/token", verificarToken, async(req, res, next) => {
     }
 
     const datosZoomUsuario = await ZoomDatosUsuarios.deleteOne({ userId: mongoose.Types.ObjectId(usuario._id) });
-    if (datosZoomUsuario.deletedCount === 0) {
+    if (datosZoomUsuario.deletedCount == 0) {
         return next(new Error("No existen datos de Zoom del usuario"));
     }
 

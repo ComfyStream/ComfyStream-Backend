@@ -17,7 +17,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
 
     let encontrado = false;
     for (let asistencia of misAsistencias) {
-        let coinciden = eventosProfesional.filter((e) => String(e._id) === String(asistencia.evento._id));
+        let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter((e) => new Date(e.fecha) < new Date());
             if (coinciden.length > 0) {
@@ -32,7 +32,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
     }
 
     for (let valoracion of misValoraciones) {
-        if (String(valoracion.profesional._id) === String(profesional._id)) {
+        if (String(valoracion.profesional._id) == String(profesional._id)) {
             return resp.json({ msg: "Ya has valorado a este profesional" });
         }
     }
@@ -70,7 +70,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
 
     let encontrado = false;
     for (let asistencia of misAsistencias) {
-        let coinciden = eventosProfesional.filter((e) => String(e._id) === String(asistencia.evento._id));
+        let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter((e) => new Date(e.fecha) < new Date());
             if (coinciden.length > 0) {
@@ -85,7 +85,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
     }
 
     for (let valoracion of misValoraciones) {
-        if (String(valoracion.profesional._id) === String(profesional._id)) {
+        if (String(valoracion.profesional._id) == String(profesional._id)) {
             return resp.json({ puede: false });
         }
     }

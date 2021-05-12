@@ -33,10 +33,10 @@ router.post("/zoom/token", verificarToken, async(req, res, next) => {
         "?code=" + req.body.code +
         "&redirect_uri=" + ZOOM_REDIRECT_URI +
         "&grant_type=authorization_code", {
-        headers: {
-            "Authorization": "Basic " + Buffer.from(ZOOM_CLIENT_ID + ":" + ZOOM_CLIENT_SECRET).toString("base64")
-        }
-    });
+            headers: {
+                "Authorization": "Basic " + Buffer.from(ZOOM_CLIENT_ID + ":" + ZOOM_CLIENT_SECRET).toString("base64")
+            }
+        });
 
     const datosParseados = JSON.parse(respuesta.body);
 
@@ -45,7 +45,7 @@ router.post("/zoom/token", verificarToken, async(req, res, next) => {
 
     if (preDatosZoom) {
         return next(new Error("El usuario ya cuenta con datos de acceso a Zoom"));
-    } 
+    }
 
     const zoomDatosUsuarios = new ZoomDatosUsuarios({
         userId: usuario._id,
@@ -69,9 +69,9 @@ router.delete("/zoom/token", verificarToken, async(req, res, next) => {
     if (!usuario) {
         return next(new Error("No existen datos del usuario"));
     }
-    
+
     const datosZoomUsuario = await ZoomDatosUsuarios.deleteOne({ userId: mongoose.Types.ObjectId(usuario._id) });
-    if (datosZoomUsuario.deletedCount === 0) {
+    if (datosZoomUsuario.deletedCount == 0) {
         return next(new Error("No existen datos de Zoom del usuario"));
     }
 
@@ -179,8 +179,8 @@ router.get("/zoom/usuario-enlazado", verificarToken, async(req, resp) => {
     const usuario = req.usuario;
     const usuarioZoom = await ZoomDatosUsuarios.find({ userId: usuario });
 
-    return resp.json({ 
-        encontrado: usuarioZoom.length > 0 
+    return resp.json({
+        encontrado: usuarioZoom.length > 0
     });
 });
 

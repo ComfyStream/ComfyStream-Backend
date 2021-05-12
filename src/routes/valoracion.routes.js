@@ -17,7 +17,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
 
     let encontrado = false;
     for (let asistencia of misAsistencias) {
-        let coinciden = eventosProfesional.filter((e) => String(e._id) === String(asistencia.evento._id));
+        let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter((e) => new Date(e.fecha) < new Date());
             if (coinciden.length > 0) {
@@ -32,7 +32,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
     }
 
     for (let valoracion of misValoraciones) {
-        if (String(valoracion.profesional._id) === String(profesional._id)) {
+        if (String(valoracion.profesional._id) == String(profesional._id)) {
             return resp.json({ msg: "Ya has valorado a este profesional" });
         }
     }
@@ -70,7 +70,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
 
     let encontrado = false;
     for (let asistencia of misAsistencias) {
-        let coinciden = eventosProfesional.filter((e) => String(e._id) === String(asistencia.evento._id));
+        let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             coinciden = coinciden.filter((e) => new Date(e.fecha) < new Date());
             if (coinciden.length > 0) {
@@ -85,7 +85,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
     }
 
     for (let valoracion of misValoraciones) {
-        if (String(valoracion.profesional._id) === String(profesional._id)) {
+        if (String(valoracion.profesional._id) == String(profesional._id)) {
             return resp.json({ puede: false });
         }
     }
@@ -103,7 +103,7 @@ router.delete("/valoracion/eliminar/:id", verificarToken, async(req, resp) => {
         return resp.json({ msg: "No existe la valoración" });
     }
 
-    if (valoracion.autor !== autor._id) {
+    if (valoracion.autor != autor._id) {
         return resp.json({ msg: "No has realizado esta valoración" });
     }
 
@@ -139,7 +139,7 @@ router.get("/valoraciones-recibidas/:id", async(req, resp) => {
 router.get("/mis-valoraciones", verificarToken, async(req, resp) => {
     const autor = req.usuario;
     const valoraciones = await Valoracion.find({ autor });
-    
+
     return resp.json({
         msg: "Exito",
         valoraciones

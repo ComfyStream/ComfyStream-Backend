@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const router = Router();
 const eventoFotos = new EventoFotos();
 
-router.get("/eventos", async (req, resp) => {
+router.get("/eventos", async(req, resp) => {
     const eventos = await Evento.find();
 
     return resp.json({
@@ -18,8 +18,9 @@ router.get("/eventos", async (req, resp) => {
     });
 });
 
-router.post("/evento", async (req, res) => {
+router.post("/evento", async(req, res) => {
     const evento = await Evento.findById(req.body._id);
+
 
     return res.json({
         msg: "200 OK",
@@ -27,7 +28,7 @@ router.post("/evento", async (req, res) => {
     });
 });
 
-router.get("/mis-eventos", verificarToken, async (req, res) => {
+router.get("/mis-eventos", verificarToken, async(req, res) => {
     const eventos = await Evento.find({ profesional: req.usuario._id });
 
     return res.json({
@@ -37,10 +38,10 @@ router.get("/mis-eventos", verificarToken, async (req, res) => {
 });
 
 // Obtiene los usuarios que asisten al evento pasado como parámetro
-router.post("/evento/asistentes", verificarToken, async (req, res) => {
+router.post("/evento/asistentes", verificarToken, async(req, res) => {
     var asistentes = [];
 
-    const idAsistentes = await Asistencia.find({ evento: mongoose.Types.ObjectId(req.body.eventoId)});
+    const idAsistentes = await Asistencia.find({ evento: mongoose.Types.ObjectId(req.body.eventoId) });
 
     for (const asistente of idAsistentes) {
         const user = await Usuario.findById(asistente.usuario).select({ email: 1, img: 1, profesional: 1, nombre: 1 });
@@ -54,14 +55,14 @@ router.post("/evento/asistentes", verificarToken, async (req, res) => {
 });
 
 // Obtener los eventos disponibles: Fecha superior a hoy + si personal que no esté cogido
-router.get("/evento/disponibles", async (req, res) => {
+router.get("/evento/disponibles", async(req, res) => {
     var respuesta = [];
     const eventos = await Evento.find({ fecha: { $gte: new Date() } });
 
     for (const evento of eventos) {
         if (evento.esPersonal) {
             const check = await Asistencia.find({ evento: mongoose.Types.ObjectId(evento._id) });
-            if (check.length === 0) {
+            if (check.length == 0) {
                 respuesta.push(evento);
             }
         } else {
@@ -74,30 +75,30 @@ router.get("/evento/disponibles", async (req, res) => {
     });
 });
 
-router.post("/evento/nuevo", verificarToken, async (req, res) => {
+router.post("/evento/nuevo", verificarToken, async(req, res) => {
     const profesional = await Usuario.findById(req.usuario._id);
 
     let datos = req.body;
     datos.profesional = profesional;
 
     let evento = await Evento.create(datos);
-    
+
     res.json({
         msg: "Exito",
         evento
     });
 });
 
-router.post("/evento/editar", verificarToken, async (req, res) => {
+router.post("/evento/editar", verificarToken, async(req, res) => {
     const profesional = req.usuario;
     const { id } = req.body;
     const misEventos = await Evento.find({ profesional });
-    const encontrado = misEventos.filter((e) => e._id === id);
+    const encontrado = misEventos.filter((e) => e._id == id);
 
-    if (encontrado.length === 0) {
+    if (encontrado.length == 0) {
         return res.json({ msg: "El evento no es tuyo" });
     }
-
+    console.log("dsfdf");
     const evento = await Evento.findByIdAndUpdate(id, req.body, { new: true });
 
     res.json({
@@ -114,7 +115,7 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
     res.sendFile(pathCompleto);
 });
 
-router.post("/buscador", async (req, res) => {
+router.post("/buscador", async(req, res) => {
     var eventosDisponibles = [];
     const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax, estrellas } = req.body;
     let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: "es", strength: 2 });
@@ -122,7 +123,7 @@ router.post("/buscador", async (req, res) => {
     for (const evento of eventos) {
         if (evento.esPersonal) {
             const check = await Asistencia.find({ evento: evento._id });
-            if (check.length === 0) {
+            if (check.length == 0) {
                 eventosDisponibles.push(evento);
             }
         } else {
@@ -130,8 +131,8 @@ router.post("/buscador", async (req, res) => {
         }
     }
 
-    if (categoria) { 
-        eventosDisponibles = eventosDisponibles.filter((e) => e.categoria === categoria);
+    if (categoria) {
+        eventosDisponibles = eventosDisponibles.filter((e) => e.categoria == categoria);
     }
 
     if (precioMin) {
@@ -140,7 +141,7 @@ router.post("/buscador", async (req, res) => {
 
     if (precioMax) {
         eventosDisponibles = eventosDisponibles.filter((e) => e.precio <= precioMax);
-    } 
+    }
 
     if (fechaMin) {
         eventosDisponibles = eventosDisponibles.filter((e) => new Date(e.fecha) >= new Date(fechaMin));
@@ -163,7 +164,7 @@ router.post("/buscador", async (req, res) => {
 
         eventosDisponibles = eventosDisponibles.filter((e) => {
             let col = profesionales;
-            col = col.filter((p) => String(p._id) === String(e.profesional));
+            col = col.filter((p) => String(p._id) == String(e.profesional));
             profesional = col[0];
             return profesional.valoracionMedia !== undefined && profesional.valoracionMedia >= estrellas;
         });
@@ -175,12 +176,12 @@ router.post("/buscador", async (req, res) => {
     });
 });
 
-router.delete("/evento/eliminar/:idEvento", verificarToken, async (req, resp) => {
+router.delete("/evento/eliminar/:idEvento", verificarToken, async(req, resp) => {
     const id = req.params.idEvento;
     const evento = await Evento.findById(id);
     const usuario = req.usuario;
 
-    if (usuario._id !== evento.profesional) {
+    if (usuario._id != evento.profesional) {
         return resp.json({ msg: "No es un evento tuyo" });
     }
 

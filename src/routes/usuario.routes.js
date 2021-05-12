@@ -63,6 +63,7 @@ router.get("/usuarioZoom", verificarToken, async(req, res) => {
 router.post("/registro", async(req, resp) => {
     let datos = req.body;
     datos.valoracionMedia = 0;
+    datos.bonos = 0
     const { email, cuentaBancariaIBAN } = req.body;
     const emailEncontrado = await Usuario.find({ email });
     const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN });
@@ -193,6 +194,18 @@ router.post("/usuario/cambiar/banco", verificarToken, async(req, resp, next) => 
             usuario
         });
     }
+});
+
+router.put("/sumar-bono/:idReferido", async(req, resp) => {
+    const { idReferido } = req.params;
+    const usuario = await Usuario.findById(idReferido);
+    const bonos = usuario.bonos + 1;
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario._id), { $set: { bonos } }, { new: true });
+
+    return resp.json({
+        msg: "Bonos sumados",
+        usuarioActualizado
+    });
 });
 
 module.exports = router;

@@ -12,6 +12,11 @@ router.post("/asistencia/nuevo", verificarToken, async(req, resp) => {
     const evento = await Evento.findById(req.body.eventoId);
     const pagoPaypalUrl = req.body.pagoPaypalUrl;
     const fecha_compra = new Date();
+    const { bonoAplicado } = req.body
+    if (bonoAplicado) {
+        const bonos = usuario.bonos - 1;
+        await Usuario.findByIdAndUpdate(String(usuario._id), { $set: { bonos } }, { new: true });
+    }
     const asistencia = await Asistencia.create({ usuario, evento, pagoPaypalUrl, fecha_compra });
     return resp.json({
         msg: "Exito",

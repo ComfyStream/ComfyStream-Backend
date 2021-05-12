@@ -53,6 +53,9 @@ const usuarioSchema = Schema({
     },
     numeroValoraciones: {
         type: Number
+    },
+    bonos: {
+        type: Number
     }
 });
 

@@ -81,6 +81,16 @@ router.post("/evento/nuevo", verificarToken, async(req, res) => {
     let datos = req.body;
     datos.profesional = profesional;
 
+    Date.prototype.addHours = function(h) {
+        this.setHours(this.getHours() + h);
+        return this;
+    };
+
+    let fecha = datos.fecha
+    fecha = new Date(fecha)
+    fecha.addHours(2)
+    datos.fecha = fecha
+
     let evento = await Evento.create(datos);
 
     res.json({

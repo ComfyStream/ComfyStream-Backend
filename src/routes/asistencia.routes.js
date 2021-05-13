@@ -4,6 +4,7 @@ const Evento = require("../models/evento");
 const Asistencia = require("../models/asistencia");
 const Usuario = require("../models/usuario");
 const mongoose = require("mongoose");
+const Token = require("../tools/token");
 
 const router = Router();
 
@@ -13,14 +14,16 @@ router.post("/asistencia/nuevo", verificarToken, async(req, resp) => {
     const pagoPaypalUrl = req.body.pagoPaypalUrl;
     const fecha_compra = new Date();
     const { bonoAplicado } = req.body
+    let usuarioActualizado = undefined
     if (bonoAplicado) {
         const bonos = usuario.bonos - 1;
-        await Usuario.findByIdAndUpdate(String(usuario._id), { $set: { bonos } }, { new: true });
+        usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario._id), { $set: { bonos } }, { new: true });
     }
     const asistencia = await Asistencia.create({ usuario, evento, pagoPaypalUrl, fecha_compra });
     return resp.json({
         msg: "Exito",
-        asistencia
+        asistencia,
+        tokenActualizado: usuarioActualizado ? Token.getJwtToken(usuarioActualizado) : undefined
     });
 });
 

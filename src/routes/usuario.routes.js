@@ -179,19 +179,27 @@ router.post("/usuario/cambiar/banco", verificarToken, async(req, resp, next) => 
     const usuario = await Usuario.findOne({ email: req.usuario.email });
     const { titular, cuenta, contrasena } = req.body;
     const coincide = await usuario.compararPassword(contrasena);
+    const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN: cuenta });
 
     if (!coincide) {
         return resp.json({ msg: "Password incorrecta" });
+    } else if (bancoEncontrado.length > 0 && cuenta !== usuario.cuentaBancariaIBAN && cuenta) {
+        return resp.json({ msg: "Cuenta en uso" });
     } else {
-        usuario.cuentaBancariaIBAN = cuenta;
-        usuario.titularCuenta = titular;
-        delete usuario.password;
+        let datos = {
+            cuentaBancariaIBAN: cuenta,
+            titular
+        }
 
-        await usuario.save();
+        if (contrasena) {
+            datos.password = bcryptjs.hashSync(contrasena, 10);
+        }
+
+        const usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario._id), datos, { new: true });
 
         return resp.json({
             msg: "IBAN actualizado con éxito",
-            usuario
+            tokenActualizado: Token.getJwtToken(usuarioActualizado)
         });
     }
 });

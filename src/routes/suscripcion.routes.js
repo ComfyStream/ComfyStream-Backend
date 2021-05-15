@@ -49,4 +49,56 @@ router.get("/esta-suscrito/:idProfesional", verificarToken, async(req, resp) => 
 
 });
 
+router.get("/suscriptores", verificarToken, async(req, resp) => {
+    const profesional = req.usuario
+    let suscripciones = await Suscripcion.find({ profesional });
+    suscripciones = suscripciones.filter(s => {
+        let hoy = new Date();
+        hoy.setHours(hoy.getHours() + 2);
+        return s.fecha_expiracion >= hoy;
+    });
+    let suscriptores = [];
+    let ids = [];
+
+    for (let i = 0; i < suscripciones.length; i++) {
+        const suscripcion = suscripciones[i];
+        let suscriptor = String(suscripcion.suscriptor);
+        if (!ids.includes(suscriptor)) {
+            ids.push(suscriptor);
+            suscriptor = await Usuario.findById(suscripcion.suscriptor);
+            const datos = { usuario: suscriptor, suscripcion };
+            suscriptores.push(datos);
+        }
+    }
+
+    return resp.json({ suscriptores });
+
+});
+
+router.get("/suscripciones", verificarToken, async(req, resp) => {
+    const suscriptor = req.usuario;
+    let suscripciones = await Suscripcion.find({ suscriptor });
+    suscripciones = suscripciones.filter(s => {
+        let hoy = new Date();
+        hoy.setHours(hoy.getHours() + 2);
+        return s.fecha_expiracion >= hoy;
+    });
+    let profesionales = [];
+    let ids = [];
+
+    for (let i = 0; i < suscripciones.length; i++) {
+        const suscripcion = suscripciones[i];
+        let profesional = String(suscripcion.profesional);
+        if (!ids.includes(profesional)) {
+            ids.push(profesional);
+            profesional = await Usuario.findById(suscripcion.profesional);
+            const datos = { usuario: profesional, suscripcion };
+            profesionales.push(datos);
+        }
+    }
+
+    return resp.json({ profesionales });
+
+});
+
 module.exports = router;

@@ -8,7 +8,7 @@ const ZoomDatosReunion = require("../models/zoomDatosReunion");
 
 const ZOOM_CLIENT_ID = "VT5sHWdTTMalMXqMqxQ5g";
 const ZOOM_CLIENT_SECRET = "I9MkD102Hq2VNO0chydCcTd77fpaX1F7";
-const ZOOM_REDIRECT_URI = "https://comfystream-s3.web.app/landing";
+const ZOOM_REDIRECT_URI = "https://comfystream-ppl.web.app/landing";
 
 const router = Router();
 

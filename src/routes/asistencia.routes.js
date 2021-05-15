@@ -3,6 +3,7 @@ const verificarToken = require("../tools/verificarToken");
 const Evento = require("../models/evento");
 const Asistencia = require("../models/asistencia");
 const Usuario = require("../models/usuario");
+const Suscripcion = require("../models/suscripcion");
 const mongoose = require("mongoose");
 const Token = require("../tools/token");
 
@@ -11,14 +12,25 @@ const router = Router();
 router.post("/asistencia/nuevo", verificarToken, async(req, resp) => {
     const usuario = req.usuario;
     const evento = await Evento.findById(req.body.eventoId);
-    const pagoPaypalUrl = req.body.pagoPaypalUrl;
+    let pagoPaypalUrl = req.body.pagoPaypalUrl;
     const fecha_compra = new Date();
-    const { bonoAplicado } = req.body
+    const { bonoAplicado, idProfesional } = req.body
+
     let usuarioActualizado = undefined
     if (bonoAplicado) {
         const bonos = usuario.bonos - 1;
         usuarioActualizado = await Usuario.findByIdAndUpdate(String(usuario._id), { $set: { bonos } }, { new: true });
     }
+
+    if (!pagoPaypalUrl) {
+        const profesional = await Usuario.findById(idProfesional);
+        const suscripciones = await Suscripcion.find({ suscriptor: usuario, profesional }).sort({ fecha_expiracion: -1 });
+        if (suscripciones && suscripciones.length > 0) {
+            suscripcion = suscripciones[0];
+            pagoPaypalUrl = suscripcion.pagoPaypalUrl;
+        }
+    }
+
     const asistencia = await Asistencia.create({ usuario, evento, pagoPaypalUrl, fecha_compra });
     return resp.json({
         msg: "Exito",

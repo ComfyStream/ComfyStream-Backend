@@ -39,6 +39,9 @@ const usuarioSchema = Schema({
     titularCuenta: {
         type: String,
     },
+    precioSuscripcion: {
+        type: Number
+    },
     admin: {
         type: Boolean
     },

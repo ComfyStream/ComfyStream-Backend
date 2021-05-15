@@ -216,4 +216,47 @@ router.put("/sumar-bono/:idReferido", async(req, resp) => {
     });
 });
 
+
+
+router.put("/recuperar-password", async(req, resp) => {
+
+    const { email } = req.body;
+    let usuario = await Usuario.findOne({ email });
+
+    const nuevaPassword = crypto.randomBytes(5).toString("hex");
+
+    var transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "comfystreamcontact@gmail.com",
+            pass: "Grupo2ispp."
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    const mailOptions = {
+        from: "comfystreamcontact@gmail.com",
+        to: email,
+        subject: "Recuperar contraseña de usuario de ComfyStream",
+        html: `<p>
+        ¡Muy buenas! Tu nueva contraseña es: <strong>${nuevaPassword}</strong>. Inicia sesión con ella y cámbiala por una personal.
+        </p>`
+    };
+
+    transporter.sendMail(mailOptions, async function(error, info) {
+        if (error) {
+            return resp.json({ msg: error.message });
+        } else {
+            const password = bcryptjs.hashSync(nuevaPassword, 10);
+            await Usuario.findByIdAndUpdate(String(usuario._id), { $set: { password } }, { new: true });
+            return resp.json({
+                msg: "Nueva password obtenida",
+                nuevaPassword
+            });
+        }
+    });
+})
+
 module.exports = router;

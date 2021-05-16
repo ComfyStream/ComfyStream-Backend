@@ -6,7 +6,7 @@ project:
     github:
       url: 'https://github.com/ComfyStream/ComfyStream-Backend'
     heroku:
-      url: 'https://comfystream-backend-s2.herokuapp.com/'
+      url: 'https://comfystream-backend-ppl.herokuapp.com/'
     travis:
       url: 'https://www.travis-ci.com/github/ComfyStream/ComfyStream-Backend'
   members:

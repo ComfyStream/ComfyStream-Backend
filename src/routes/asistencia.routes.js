@@ -14,6 +14,7 @@ router.post("/asistencia/nuevo", verificarToken, async(req, resp) => {
     const evento = await Evento.findById(req.body.eventoId);
     let pagoPaypalUrl = req.body.pagoPaypalUrl;
     const fecha_compra = new Date();
+    fecha_compra.setHours(fecha_compra.getHours() + 2);
     const { bonoAplicado, idProfesional } = req.body
 
     let usuarioActualizado = undefined

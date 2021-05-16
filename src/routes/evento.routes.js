@@ -57,7 +57,9 @@ router.post("/evento/asistentes", verificarToken, async(req, res) => {
 // Obtener los eventos disponibles: Fecha superior a hoy + si personal que no esté cogido
 router.get("/evento/disponibles", async(req, res) => {
     var respuesta = [];
-    const eventos = await Evento.find({ fecha: { $gte: new Date() } });
+    let hoy = new Date()
+    hoy.setHours(hoy.getHours() + 2);
+    const eventos = await Evento.find({ fecha: { $gte: hoy } });
 
     for (const evento of eventos) {
         if (evento.esPersonal) {

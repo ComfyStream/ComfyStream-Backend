@@ -63,7 +63,7 @@ router.get("/usuarioZoom", verificarToken, async(req, res) => {
 router.post("/registro", async(req, resp) => {
     let datos = req.body;
     datos.valoracionMedia = 0;
-    datos.bonos = 0
+    datos.bonos = 0;
     const { email, cuentaBancariaIBAN } = req.body;
     const emailEncontrado = await Usuario.find({ email });
     const bancoEncontrado = await Usuario.find({ cuentaBancariaIBAN });
@@ -97,7 +97,7 @@ router.post("/registro", async(req, resp) => {
             subject: "Confirmación de cuenta de usuario de ComfyStream",
             html: `<p>
             ¡Muy buenas! Haz click en la siguiente ruta para confirmar tu cuenta de usuario: 
-            <a href="https://comfystream-s3.web.app/confirmar/${datos.urlConfirmacion}">https://comfystream-s3.web.app/confirmar/${datos.urlConfirmacion}</a>
+            <a href="https://comfystream-ppl.web.app/confirmar/${datos.urlConfirmacion}">https://comfystream-ppl.web.app/confirmar/${datos.urlConfirmacion}</a>
             </p>`
         };
 

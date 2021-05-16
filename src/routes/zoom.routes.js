@@ -122,47 +122,72 @@ router.post("/zoom/room", verificarToken, async(req, res) => {
         "duration": req.body.duracion,
         "waiting_room": true
     };
+    try {
 
-    const datosUsuario = await got.get("https://api.zoom.us/v2/users/me", {
-        headers: {
-            "Authorization": "Bearer " + zoomDatosUsuarios.access_token
-        }
-    });
+        const datosUsuario = await got.get("https://api.zoom.us/v2/users/me", {
+            headers: {
+                "Authorization": "Bearer " + zoomDatosUsuarios.access_token
+            }
+        });
 
-    const respuesta = await got.post("https://api.zoom.us/v2/users/" + JSON.parse(datosUsuario.body)["email"] + "/meetings", {
-        headers: {
-            "Authorization": "Bearer " + zoomDatosUsuarios.access_token,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-    });
+        const respuesta = await got.post("https://api.zoom.us/v2/users/" + JSON.parse(datosUsuario.body)["email"] + "/meetings", {
+            headers: {
+                "Authorization": "Bearer " + zoomDatosUsuarios.access_token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
 
-    const respuestaParseada = JSON.parse(respuesta.body);
+        const respuestaParseada = JSON.parse(respuesta.body);
 
-    const zoomDatosReunion = new ZoomDatosReunion({
-        userId: usuario._id,
-        eventoId: req.body._id,
-        uuid: respuestaParseada.uuid,
-        id: respuestaParseada.id,
-        host_id: respuestaParseada.host_id,
-        host_email: respuestaParseada.host_email,
-        topic: respuestaParseada.topic,
-        type: respuestaParseada.type,
-        status: respuestaParseada.status,
-        start_time: respuestaParseada.start_time,
-        duration: respuestaParseada.duration,
-        created_at: respuestaParseada.created_at,
-        start_url: respuestaParseada.start_url,
-        join_url: respuestaParseada.join_url,
-        password: respuestaParseada.password
-    });
+        const zoomDatosReunion = new ZoomDatosReunion({
+            userId: usuario._id,
+            uuid: respuestaParseada.uuid,
+            id: respuestaParseada.id,
+            host_id: respuestaParseada.host_id,
+            host_email: respuestaParseada.host_email,
+            topic: respuestaParseada.topic,
+            type: respuestaParseada.type,
+            status: respuestaParseada.status,
+            start_time: req.body.fecha,
+            duration: respuestaParseada.duration,
+            created_at: respuestaParseada.created_at,
+            start_url: respuestaParseada.start_url,
+            join_url: respuestaParseada.join_url,
+            password: respuestaParseada.password
+        });
 
-    await zoomDatosReunion.save();
+        const reunion = await zoomDatosReunion.save();
 
-    return res.json({
-        msg: "200 Ok",
-        datos: JSON.parse(respuesta.body)
-    });
+        return res.json({
+            msg: "200 Ok",
+            idReunion: reunion._id
+        });
+    } catch (error) {
+        return res.json({
+            msg: "error",
+            error: error
+        });
+    }
+
+});
+router.put("/zoom/asignarEvento", verificarToken, async(req, res, next) => {
+    try {
+
+
+        const { idReunion, eventoId } = req.body;
+        const reunion = await ZoomDatosReunion.findById(idReunion);
+        await ZoomDatosReunion.findByIdAndUpdate(reunion._id, { $set: { eventoId: eventoId } }, { new: true });
+
+        return res.json({
+            msg: "200 Ok"
+        });
+    } catch (error) {
+        return res.json({
+            msg: "error",
+            error: error.message
+        });
+    }
 });
 
 router.post("/zoom/datosReunion", verificarToken, async(req, res, next) => {

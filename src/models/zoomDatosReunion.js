@@ -8,8 +8,7 @@ const zoomDatosReunionSchema = Schema({
     },
     eventoId: {
         type: Schema.Types.ObjectId,
-        ref: "Evento",
-        required: true
+        ref: "Evento"
     },
     uuid: {
         type: String,

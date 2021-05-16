@@ -19,7 +19,9 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
     for (let asistencia of misAsistencias) {
         let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
-            coinciden = coinciden.filter((e) => new Date(e.fecha) < new Date());
+            let hoy = new Date();
+            hoy.setHours(hoy.getHours() + 2);
+            coinciden = coinciden.filter((e) => new Date(e.fecha) < hoy);
             if (coinciden.length > 0) {
                 encontrado = true;
                 break;
@@ -72,7 +74,9 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
     for (let asistencia of misAsistencias) {
         let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
-            coinciden = coinciden.filter((e) => new Date(e.fecha) < new Date());
+            let hoy = new Date();
+            hoy.setHours(hoy.getHours() + 2);
+            coinciden = coinciden.filter((e) => new Date(e.fecha) < hoy);
             if (coinciden.length > 0) {
                 encontrado = true;
                 break;

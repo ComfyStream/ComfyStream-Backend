@@ -57,8 +57,7 @@ router.post("/evento/asistentes", verificarToken, async(req, res) => {
 // Obtener los eventos disponibles: Fecha superior a hoy + si personal que no esté cogido
 router.get("/evento/disponibles", async(req, res) => {
     var respuesta = [];
-    let hoy = new Date()
-    const eventos = await Evento.find({ fecha: { $gte: hoy } });
+    const eventos = await Evento.find({ fecha: { $gte: new Date() } });
 
     for (const evento of eventos) {
         if (evento.esPersonal) {
@@ -128,9 +127,7 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
 router.post("/buscador", async(req, res) => {
     var eventosDisponibles = [];
     const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax, estrellas } = req.body;
-    let hoy = new Date();
-    hoy.setHours(hoy);
-    let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: hoy } }).collation({ locale: "es", strength: 2 });
+    let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: "es", strength: 2 });
 
     for (const evento of eventos) {
         if (evento.esPersonal) {

@@ -58,7 +58,6 @@ router.post("/evento/asistentes", verificarToken, async(req, res) => {
 router.get("/evento/disponibles", async(req, res) => {
     var respuesta = [];
     let hoy = new Date()
-    hoy.setHours(hoy.getHours() + 2);
     const eventos = await Evento.find({ fecha: { $gte: hoy } });
 
     for (const evento of eventos) {
@@ -90,7 +89,6 @@ router.post("/evento/nuevo", verificarToken, async(req, res) => {
 
     let fecha = datos.fecha
     fecha = new Date(fecha)
-    fecha.addHours(2)
     datos.fecha = fecha
 
     let evento = await Evento.create(datos);
@@ -130,7 +128,9 @@ router.get("/:usuarioId/:eventoId/img", (req, res) => {
 router.post("/buscador", async(req, res) => {
     var eventosDisponibles = [];
     const { titulo, categoria, precioMin, precioMax, fechaMin, fechaMax, estrellas } = req.body;
-    let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: new Date() } }).collation({ locale: "es", strength: 2 });
+    let hoy = new Date();
+    hoy.setHours(hoy);
+    let eventos = await Evento.find({ titulo: new RegExp(titulo, "i"), fecha: { $gte: hoy } }).collation({ locale: "es", strength: 2 });
 
     for (const evento of eventos) {
         if (evento.esPersonal) {

@@ -14,8 +14,8 @@ router.post("/nueva-suscripcion", verificarToken, async(req, resp) => {
     const fecha_compra = new Date();
     let fecha_expiracion = new Date();
     fecha_expiracion.setMonth(fecha_expiracion.getMonth() + 1);
-    fecha_compra.setHours(fecha_compra.getHours() + 2);
-    fecha_expiracion.setHours(fecha_expiracion.getHours() + 2);
+    fecha_compra.setHours(fecha_compra.getHours());
+    fecha_expiracion.setHours(fecha_expiracion.getHours());
 
     const suscripcion = await Suscripcion.create({ suscriptor, profesional, pagoPaypalUrl, fecha_compra, fecha_expiracion });
 
@@ -38,7 +38,7 @@ router.get("/esta-suscrito/:idProfesional", verificarToken, async(req, resp) => 
     if (suscripciones && suscripciones.length > 0) {
         suscripcion = suscripciones[0];
         let hoy = new Date();
-        hoy.setHours(hoy.getHours() + 2);
+        hoy.setHours(hoy.getHours());
         suscrito = suscripcion.fecha_expiracion > hoy;
     }
 
@@ -54,7 +54,7 @@ router.get("/suscriptores", verificarToken, async(req, resp) => {
     let suscripciones = await Suscripcion.find({ profesional });
     suscripciones = suscripciones.filter(s => {
         let hoy = new Date();
-        hoy.setHours(hoy.getHours() + 2);
+        hoy.setHours(hoy.getHours());
         return s.fecha_expiracion >= hoy;
     });
     let suscriptores = [];
@@ -80,7 +80,7 @@ router.get("/suscripciones", verificarToken, async(req, resp) => {
     let suscripciones = await Suscripcion.find({ suscriptor });
     suscripciones = suscripciones.filter(s => {
         let hoy = new Date();
-        hoy.setHours(hoy.getHours() + 2);
+        hoy.setHours(hoy.getHours());
         return s.fecha_expiracion >= hoy;
     });
     let profesionales = [];

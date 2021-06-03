@@ -20,7 +20,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
         let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             let hoy = new Date();
-            hoy.setHours(hoy.getHours() + 2);
+            hoy.setHours(hoy.getHours());
             coinciden = coinciden.filter((e) => new Date(e.fecha) < hoy);
             if (coinciden.length > 0) {
                 encontrado = true;
@@ -44,7 +44,7 @@ router.post("/valoracion/nueva", verificarToken, async(req, resp) => {
         return this;
     };
 
-    const fecha = new Date().addHours(2);
+    const fecha = new Date();
     const valoracion = await Valoracion.create({ autor, profesional, mensaje, estrellas, fecha, nombreAutor: autor.nombre, nombreProfesional: profesional.nombre });
     const valoracionesProfesional = await Valoracion.find({ profesional });
     let media = 0;
@@ -75,7 +75,7 @@ router.get("/puede-valorar/:id", verificarToken, async(req, resp) => {
         let coinciden = eventosProfesional.filter((e) => String(e._id) == String(asistencia.evento._id));
         if (coinciden.length > 0) {
             let hoy = new Date();
-            hoy.setHours(hoy.getHours() + 2);
+            hoy.setHours(hoy.getHours());
             coinciden = coinciden.filter((e) => new Date(e.fecha) < hoy);
             if (coinciden.length > 0) {
                 encontrado = true;

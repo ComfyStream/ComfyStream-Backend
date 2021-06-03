@@ -118,10 +118,11 @@ router.post("/zoom/room", verificarToken, async(req, res) => {
     const body = {
         "topic": req.body.titulo,
         "type": 2,
-        "start_time": req.body.fecha,
+        "start_time": new Date(req.body.fecha),
         "duration": req.body.duracion,
         "waiting_room": true
     };
+    console.log(body);
     try {
 
         const datosUsuario = await got.get("https://api.zoom.us/v2/users/me", {
